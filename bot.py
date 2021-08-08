@@ -147,19 +147,15 @@ def handle_reply(message):
         utils.get_trello_token(message.chat.id)
     )
     response = requests.get(board_url).json()
-    bot.send_message(message.chat.id, str(response))
-    url = "https://api.trello.com/1/cards?&key={}&token={}&name={}&".format(
+    list_id = response[0]["id"]
+    url = "https://api.trello.com/1/cards?&key={}&token={}&name={}&idList={}".format(
         trello_key,
-        utils.get_trello_token(message.chat.id)
+        utils.get_trello_token(message.chat.id),
+        message.text,
+        list_id
     )
-
-    # keyboard_week = telebot.types.ReplyKeyboardMarkup(True).row("Текущая неделя", "Следующая неделя")
-    # bot.send_message(message.chat.id, 'Выберите неделю', reply_markup=keyboard_week)
-    # keyboard_trello = types.InlineKeyboardMarkup()
-    # trello_send_button = types.InlineKeyboardButton(text="Отправить в Trello", url='https://trello.com')
-    # keyboard_trello.add(trello_send_button)
-    # bot.send_message(message.chat.id, "[{}] – {}!".format(message.text, comment_message.text),
-    #                  reply_markup=keyboard_trello)
+    response = requests.post(url)
+    bot.send_message(message.chat.id, str(response))
 
 
 def get_calendar(message):
