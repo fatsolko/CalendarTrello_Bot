@@ -148,9 +148,10 @@ def handle_reply(message):
     )
     response = requests.get(board_url).json()
     list_id = response[0]["id"]
-    url = "https://api.trello.com/1/cards?&key={}&token={}&name={}&idList={}".format(
+    url = "https://api.trello.com/1/cards?&key={}&token={}&name={}&desc={}&idList={}".format(
         trello_key,
         utils.get_trello_token(message.chat.id),
+        "NAME",  # TODO get calendar event name
         message.text,
         list_id
     )
