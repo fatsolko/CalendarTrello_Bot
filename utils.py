@@ -1,3 +1,6 @@
+import json
+
+
 def find_between(s, first, last):
     try:
         start = s.index(first) + len(first)
@@ -21,3 +24,16 @@ def get_google_token_path(chat_id):
 
 def get_trello_token_path(chat_id):
     return 'users/{}_trello_token.json'.format(chat_id)
+
+
+def get_trello_token(chat_id):
+    return json.load(open(get_trello_token_path(chat_id)))["token"]
+
+
+def get_user_data(chat_id):
+    return json.load(open('users/{}.json'.format(chat_id)))
+
+
+def save_user_data(chat_id, data):
+    with open("users/{}.json".format(chat_id), "w") as outfile:
+        json.dump(data, outfile)

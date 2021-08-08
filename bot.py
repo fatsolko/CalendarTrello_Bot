@@ -17,6 +17,7 @@ f = open('credentials.json')
 credentials = json.load(f)["web"]
 client_id = credentials["client_id"]
 client_secret = credentials["client_secret"]
+trello_key = credentials["trello_key"]
 f.close()
 f = open('settings.json')
 settings = json.load(f)
@@ -25,17 +26,8 @@ redirect_url = settings["redirect_url"]
 app_name = settings["app_name"]
 f.close()
 
-message_containers = {}  # словарь сообщений
-comment_message_ids = {}  # словарь id
-
 SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
 bot = telebot.TeleBot(bot_token)
-
-
-class MessageChainNode:
-    def __init__(self):
-        self.message = Type[telebot.types.Message]  # атрибут message получает атрибуты класса Message
-        self.previous_node = Type[MessageChainNode]  # рекурсивный атрибут предыдущего узла
 
 
 @bot.message_handler(commands=['start'])
@@ -55,11 +47,11 @@ def notify_success_google_auth(chat_id, success):
     if success:
         keyboard_login = types.InlineKeyboardMarkup()
         auth_url_update_trello = 'https://trello.com/1/authorize?' \
-                                 'key=224f6adae2e797aa48a9caee49f30868&' \
+                                 'key={}&' \
                                  'expiration=never&' \
                                  'name=CalendarTrello&' \
                                  'scope=read,write&' \
-                                 'response_type=token'
+                                 'response_type=token'.format(trello_key)
 
         short_trello = pyshorteners.Shortener()
         short_url_trello = short_trello.tinyurl.short(auth_url_update_trello)
@@ -98,8 +90,20 @@ def token(message):
     }
     with open(utils.get_trello_token_path(message.chat.id), "w") as outfile:
         json.dump(j, outfile, sort_keys=True, indent=4)
-    bot.send_message(message.chat.id, "Токен получен, все ок")
-    help(message)
+
+    data = {}
+    utils.save_user_data(message.chat.id, data)
+    bot.send_message(message.chat.id, "Токен получен, все ок. /set_board чтобы выбрать доску")
+
+
+@bot.message_handler(commands=['set_board'])
+def set_board(message):
+    url = "https://api.trello.com/1/members/me/boards?fields=name,url&key={}&token={}".format(
+        trello_key,
+        utils.get_trello_token(message.chat.id)
+    )
+    response = requests.get(url)
+    bot.send_message(message.chat.id, str(response.json()))
 
 
 @bot.message_handler(func=lambda m: True)
@@ -110,51 +114,14 @@ def handle_message(message):
     if not os.path.exists(utils.get_trello_token_path(message.chat.id)):
         notify_success_google_auth(message.chat.id, True)
         return
-    global message_containers
-    global comment_message_ids
-    container = MessageChainNode()  # создание объекта класса MessageChainNode
-    container.message = message  # пришедшее сообщение
-    container.previous_node = message_containers.get(
-        message.chat.id)  # из словаря записывается чат айди в предыдущий узел контейнера
-    message_container = container  # создание объекта  класса MessageChainNode с атрибутами container полученныеми из message
-    message_containers[message.chat.id] = message_container  # ???
 
-    def detect_comment(m: MessageChainNode):
-        if m.previous_node is not None:
-            this_message = m.message
-            previous_message = m.previous_node.message
-            if previous_message.date == this_message.date:
-                if previous_message.forward_from is not None:
-                    return detect_comment(m.previous_node)
-                else:
-                    return previous_message
-        else:
-            return None
-
-    comment_message = detect_comment(message_container)
-    if comment_message is not None:
-        comment_message_id = comment_message_ids.get(message.chat.id)
-        print("checking comment: last commented - {}, this - {}".format(comment_message_id,
-                                                                        comment_message.message_id))
-        if comment_message_id != comment_message.message_id:
-            comment_message_ids[message.chat.id] = comment_message.id
-            print("found message [{}] that is a comment to forwarder message with id [{}]!".format(
-                comment_message.text, message.message_id))
-            handle_comment(message, comment_message)
-        else:
-            print("this message forwarded message's comment already was answered")
+    if message.reply_to_message is not None and message.reply_to_message.from_user.is_bot:
+        pass # handle_reply(message)
     else:
-        if message.forward_from is None:
-            get_calendar(message)
-            # if message.reply_to_message:
-            #     bot.send_message(message.chat.id, "[{}] – {}!".format(message.reply_to_message.text, message.text),
-            #                      reply_markup=keyboard_trello) TODO что это?
-        else:
-            print("this is a forwarded message without comment")
-        pass
+        get_calendar(message)
 
 
-def handle_comment(message, comment_message):
+def handle_reply(message, comment_message):
     keyboard_week = telebot.types.ReplyKeyboardMarkup(True).row("Текущая неделя", "Следующая неделя")
     bot.send_message(message.chat.id, 'Выберите неделю', reply_markup=keyboard_week)
     keyboard_trello = types.InlineKeyboardMarkup()
@@ -165,10 +132,9 @@ def handle_comment(message, comment_message):
 
 
 def get_calendar(message):
-    token_path = utils.get_google_token_path(message.chat.id)
-    if not os.path.exists(token_path):
-        bot.answer_callback_query(message.chat.id, 'вы не авторизовались. используйте /start для авторизации')
+    if not message.text.startswith("/get"):
         return
+    token_path = utils.get_google_token_path(message.chat.id)
     creds = Credentials.from_authorized_user_file(token_path, SCOPES)
 
     try:
@@ -256,4 +222,5 @@ def start_end_week():
 
 
 if __name__ == '__main__':
+    print(bot.get_me())
     bot.infinity_polling()
