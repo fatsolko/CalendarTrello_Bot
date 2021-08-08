@@ -102,8 +102,27 @@ def set_board(message):
         trello_key,
         utils.get_trello_token(message.chat.id)
     )
-    response = requests.get(url)
-    bot.send_message(message.chat.id, str(response.json()))
+    boards = requests.get(url).json()
+    parsed_boards = []
+    keyboard = types.InlineKeyboardMarkup()
+    for board in boards:
+        parsed_boards.append((board["id"], board["name"]))
+        button = types.InlineKeyboardButton(board["name"],
+                                            callback_data='set_board:{}'.format(board["id"]))
+        keyboard.row(button)
+    if len(boards) > 0:
+        bot.send_message(message.chat.id, "Выберите доску:", reply_markup=keyboard)
+    else:
+        bot.send_message(message.chat.id, "У тебя нет досок")
+
+
+@bot.callback_query_handler(func=lambda call: call.data.startswith('set_board'))
+def handle_set_board(call):
+    board_id = utils.find_after(call.data, "set_board:")
+    chat_id = call.message.chat.id
+    user_data = utils.get_user_data(chat_id)
+    user_data["board"] = board_id
+    utils.save_user_data(chat_id, user_data)
 
 
 @bot.message_handler(func=lambda m: True)
@@ -116,19 +135,31 @@ def handle_message(message):
         return
 
     if message.reply_to_message is not None and message.reply_to_message.from_user.is_bot:
-        pass # handle_reply(message)
+        handle_reply(message)
     else:
         get_calendar(message)
 
 
-def handle_reply(message, comment_message):
-    keyboard_week = telebot.types.ReplyKeyboardMarkup(True).row("Текущая неделя", "Следующая неделя")
-    bot.send_message(message.chat.id, 'Выберите неделю', reply_markup=keyboard_week)
-    keyboard_trello = types.InlineKeyboardMarkup()
-    trello_send_button = types.InlineKeyboardButton(text="Отправить в Trello", url='https://trello.com')
-    keyboard_trello.add(trello_send_button)
-    bot.send_message(message.chat.id, "[{}] – {}!".format(message.text, comment_message.text),
-                     reply_markup=keyboard_trello)
+def handle_reply(message):
+    board_url = "https://api.trello.com/1/boards/{}/lists?key={}&token={}".format(
+        utils.get_user_data(message.chat.id)["board"],
+        trello_key,
+        utils.get_trello_token(message.chat.id)
+    )
+    response = requests.get(board_url).json()
+    bot.send_message(message.chat.id, str(response))
+    url = "https://api.trello.com/1/cards?&key={}&token={}&name={}&".format(
+        trello_key,
+        utils.get_trello_token(message.chat.id)
+    )
+
+    # keyboard_week = telebot.types.ReplyKeyboardMarkup(True).row("Текущая неделя", "Следующая неделя")
+    # bot.send_message(message.chat.id, 'Выберите неделю', reply_markup=keyboard_week)
+    # keyboard_trello = types.InlineKeyboardMarkup()
+    # trello_send_button = types.InlineKeyboardButton(text="Отправить в Trello", url='https://trello.com')
+    # keyboard_trello.add(trello_send_button)
+    # bot.send_message(message.chat.id, "[{}] – {}!".format(message.text, comment_message.text),
+    #                  reply_markup=keyboard_trello)
 
 
 def get_calendar(message):
