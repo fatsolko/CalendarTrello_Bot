@@ -96,7 +96,8 @@ def token(message):
     j = {
         "token": token_trello
     }
-    json.dump(j, utils.get_trello_token_path(message.chat.id))
+    with open(utils.get_trello_token_path(message.chat.id), "w") as outfile:
+        json.dump(j, outfile, sort_keys=True, indent=4)
     bot.send_message(message.chat.id, "Токен получен, все ок")
     help(message)
 
