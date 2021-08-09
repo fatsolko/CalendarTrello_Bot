@@ -4,8 +4,29 @@ import telebot
 
 keyboard_week = telebot.types.ReplyKeyboardMarkup(one_time_keyboard=True,
                                                   resize_keyboard=True,
-                                                  input_field_placeholder='/get or /get_now ').row("Текущая неделя", "Следующая неделя")
+                                                  input_field_placeholder='/get or /get_now ').row("Текущая неделя",
+                                                                                                   "Следующая неделя")
 
+
+def get_google_token_path(chat_id):
+    return 'users/{}_google_token.json'.format(chat_id)
+
+
+def get_trello_token_path(chat_id):
+    return 'users/{}_trello_token.json'.format(chat_id)
+
+
+def get_trello_token(chat_id):
+    return json.load(open(get_trello_token_path(chat_id)))["token"]
+
+
+def get_user_data(chat_id):
+    return json.load(open('users/{}.json'.format(chat_id)))
+
+
+def save_user_data(chat_id, data):
+    with open("users/{}.json".format(chat_id), "w") as outfile:
+        json.dump(data, outfile, sort_keys=True, indent=4, ensure_ascii=False)
 
 
 def find_between(s, first, last):
@@ -24,25 +45,6 @@ def find_after(s, first):
     except ValueError:
         return ""
 
-
-def get_google_token_path(chat_id):
-    return 'users/{}_google_token.json'.format(chat_id)
-
-
-def get_trello_token_path(chat_id):
-    return 'users/{}_trello_token.json'.format(chat_id)
-
-def get_trello_token(chat_id):
-    return json.load(open(get_trello_token_path(chat_id)))["token"]
-
-
-def get_user_data(chat_id):
-    return json.load(open('users/{}.json'.format(chat_id)))
-
-
-def save_user_data(chat_id, data):
-    with open("users/{}.json".format(chat_id), "w") as outfile:
-        json.dump(data, outfile)
 
 def start_end_week():
     now = datetime.datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time

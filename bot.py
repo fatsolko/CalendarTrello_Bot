@@ -100,11 +100,20 @@ def set_board(message):
         trello_key,
         get_trello_token(message.chat.id)
     )
+    print(url)
     boards = requests.get(url).json()
+    print(boards)
     keyboard = types.InlineKeyboardMarkup()
+    board_number = 0
     for board in boards:
+        board_number += 1
         board_id = board["id"]
         board_name = board["name"]
+        user_data = get_user_data(message.chat.id) #объект питона в формате json
+        user_data["board"] = board_id
+        user_data["name"] = board_name
+        #asdasdad
+        save_user_data(message.chat.id, user_data)
         print(board_name)
         print(board_id)
         #asdasdadasd
@@ -117,7 +126,7 @@ def set_board(message):
         bot.send_message(message.chat.id, "У тебя нет досок")
 
 
-@bot.callback_query_handler(func=lambda call: call.data.startswith('board_'))
+@bot.callback_query_handler(func=lambda call: call.data.startswith('set_board'))
 def handle_set_board(call):
     board_id = find_between(call.data, "board_id=", ',name')
     board_name = find_after(call.data, 'name=')
@@ -125,7 +134,7 @@ def handle_set_board(call):
     user_data = get_user_data(chat_id)
     user_data["board"] = board_id
     user_data['name'] = board_name
-
+    #asdasd
     save_user_data(chat_id, user_data)
     bot.send_message(chat_id, "Выберана доска: {}. Для получения событий текущей недели введите /get\n"
                               "Для получения событий следующей недели введите /get_next".format(user_data["name"]),
