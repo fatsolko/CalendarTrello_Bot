@@ -101,13 +101,15 @@ def set_board(message):
         get_trello_token(message.chat.id)
     )
     boards = requests.get(url).json()
+    print(boards)
     keyboard = types.InlineKeyboardMarkup()
     for board in boards:
+
         board_id = board["id"]
         board_name = board["name"]
-        user_data = get_user_data(message.chat.id)
+        user_data = get_user_data(message.chat.id) #объект питона в формате json
         user_data["board"] = board_id
-        user_data['name'] = board_name
+        user_data["name"] = board_name
 
         save_user_data(message.chat.id, user_data)
         print(board_name)
