@@ -104,6 +104,7 @@ def set_board(message):
     boards = requests.get(url).json()
     print(type(boards))
     keyboard = types.InlineKeyboardMarkup()
+
     for board in boards:
 
         board_id = board["id"]
@@ -117,8 +118,8 @@ def set_board(message):
         print(board_id)
         for key in user_data:
             print(key, user_data[key])
-        callback_data = 'board_id={},name={}'.format(board_id, board_name)
-        button = types.InlineKeyboardButton(board_name, callback_data=callback_data)
+        # callback_data = 'board_id={},name={}'.format(board_id, board_name)
+        button = types.InlineKeyboardButton(board_name, callback_data='set_board')
         keyboard.row(button)
     if len(boards) > 0:
         bot.send_message(message.chat.id, "Выберите доску:", reply_markup=keyboard)
