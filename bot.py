@@ -160,19 +160,23 @@ def handle_reply(message):
         list_id
     )
     keyboard_send_trello = types.InlineKeyboardMarkup()
-    url_button = types.InlineKeyboardButton(text="Отправить на доску {}".format(get_user_data(message.chat.id)["name"]), callback_data="send to trello")
+    button_text = "Отправить на доску {}".format(get_user_data(message.chat.id)["name"])
+    callback_data = "send to trello={},chat_id=".format(url, message.chat.id)
+    url_button = types.InlineKeyboardButton(text=button_text, callback_data=callback_data)
     keyboard_send_trello.row(url_button)
     bot.send_message(message.chat.id, '{} – {}'.format(message.text, message.reply_to_message.text), reply_markup=keyboard_send_trello)
 
 
-    @bot.callback_query_handler(func=lambda call: True)
-    def callback_inline(call):
-        if call.data == 'send to trello':
-            response = requests.post(url)
-            print(url)
-            print(str(response))
-            if str(response) == '<Response [200]>':
-                bot.send_message(message.chat.id,"Готово")
+@bot.callback_query_handler(func=lambda call: True)
+def callback_inline(call):
+    if call.data.startswith('send to trello='):
+        url = utils.find_between(call.data, 'send to trello=', ",chat_id=")
+        chat_id = utils.find_after(call.data, ',chat_id=')
+        response = requests.post(url)
+        print(url)
+        print(str(response))
+        if str(response) == '<Response [200]>':
+            bot.send_message(chat_id, "Готово")
 
 
 
