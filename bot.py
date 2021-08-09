@@ -101,12 +101,12 @@ def set_board(message):
         get_trello_token(message.chat.id)
     )
     boards = requests.get(url).json()
-    parsed_boards = []
     keyboard = types.InlineKeyboardMarkup()
     for board in boards:
-        parsed_boards.append((board["id"], board["name"]))
-        button = types.InlineKeyboardButton(board["name"],
-                                            callback_data='set_board:{}, board_name:{}'.format(board["id"],board["name"]))
+        board_id = board["id"]
+        board_name = board["name"]
+        callback_data = 'set_board:{},board_name:{}'.format(board_id, board_name)
+        button = types.InlineKeyboardButton(board_name, callback_data=callback_data)
         keyboard.row(button)
     if len(boards) > 0:
         bot.send_message(message.chat.id, "Выберите доску:", reply_markup=keyboard)
@@ -116,7 +116,7 @@ def set_board(message):
 
 @bot.callback_query_handler(func=lambda call: call.data.startswith('set_board'))
 def handle_set_board(call):
-    board_id = find_between(call.data, "set_board:",', board_name')
+    board_id = find_between(call.data, "set_board:", ',board_name')
     board_name = find_after(call.data, 'board_name:')
     chat_id = call.message.chat.id
     user_data = get_user_data(chat_id)
