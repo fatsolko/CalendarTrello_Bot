@@ -25,7 +25,7 @@ def get_user_data(chat_id):
 
 
 def save_user_data(chat_id, data):
-    with open("users/{}.json".format(chat_id), "a") as outfile:
+    with open("users/{}.json".format(chat_id), "w") as outfile:
         json.dump(data, outfile, sort_keys=True, indent=4, ensure_ascii=False)
 
 

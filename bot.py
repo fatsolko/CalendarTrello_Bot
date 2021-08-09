@@ -113,8 +113,10 @@ def set_board(message):
         user_data["board"] = board_id
         user_data["name"] = board_name
         user_data["number"] = board_number
+        data = []
+        data.append(user_data)
 
-        save_user_data(message.chat.id, user_data)
+        save_user_data(message.chat.id, data)
         for key in user_data:
             print(key, user_data[key])
         callback_data = 'set_board {}'.format(board_number)
