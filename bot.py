@@ -167,16 +167,16 @@ def handle_reply(message):
     bot.send_message(message.chat.id, '{} – {}'.format(message.text, message.reply_to_message.text), reply_markup=keyboard_send_trello)
 
 
-@bot.callback_query_handler(func=lambda call: True)
+@bot.callback_query_handler(func=lambda call: call.data.startswith('send_to_trello'))
 def callback_inline(call):
-    if call.data.startswith('send to trello='):
-        url = utils.find_between(call.data, 'send to trello=', ",chat_id=")
-        chat_id = utils.find_after(call.data, ',chat_id=')
-        response = requests.post(url)
-        print(url)
-        print(str(response))
-        if str(response) == '<Response [200]>':
-            bot.send_message(chat_id, "Готово")
+    url = utils.find_between(call.data, 'send to trello=', ",chat_id=")
+    chat_id = utils.find_after(call.data, ',chat_id=')
+    response = requests.post(url)
+    print(url)
+    print(str(response))
+    if str(response) == '<Response [200]>':
+        bot.send_message(chat_id, "Готово")
+
 
 
 
