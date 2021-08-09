@@ -100,8 +100,9 @@ def set_board(message):
         trello_key,
         get_trello_token(message.chat.id)
     )
+    print(url)
     boards = requests.get(url).json()
-    print(boards)
+    print(type(boards))
     keyboard = types.InlineKeyboardMarkup()
     for board in boards:
 
