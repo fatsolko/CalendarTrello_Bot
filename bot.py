@@ -107,6 +107,7 @@ def set_board(message):
         board_name = board["name"]
         print(board_name)
         print(board_id)
+        #asdasdadasd
         callback_data = 'board_id={},name={}'.format(board_id, board_name)
         button = types.InlineKeyboardButton(board_name, callback_data=callback_data)
         keyboard.row(button)
