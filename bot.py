@@ -107,7 +107,7 @@ def set_board(message):
         board_name = board["name"]
         print(board_name)
         print(board_id)
-        callback_data = 'set_board:{},board_name:{}'.format(board_id, board_name)
+        callback_data = 'board_id={},name={}'.format(board_id, board_name)
         button = types.InlineKeyboardButton(board_name, callback_data=callback_data)
         keyboard.row(button)
     if len(boards) > 0:
@@ -118,8 +118,8 @@ def set_board(message):
 
 @bot.callback_query_handler(func=lambda call: call.data.startswith('set_board'))
 def handle_set_board(call):
-    board_id = find_between(call.data, "set_board:", ',board_name')
-    board_name = find_after(call.data, 'board_name:')
+    board_id = find_between(call.data, "board_id=", ',name')
+    board_name = find_after(call.data, 'name=')
     chat_id = call.message.chat.id
     user_data = get_user_data(chat_id)
     user_data["board"] = board_id
