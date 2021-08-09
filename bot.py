@@ -1,17 +1,13 @@
-import json
-import telebot
 import requests
 from telebot import types
-from typing import Type
 import google_auth_oauthlib.flow
-import datetime
 from dateutil.parser import *
 import os.path
 from googleapiclient.discovery import build
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 import pyshorteners
-import utils
+from utils import *
 
 f = open('credentials.json')
 credentials = json.load(f)["web"]
@@ -61,6 +57,8 @@ def notify_success_google_auth(chat_id, success):
         bot.send_message(chat_id, 'Ура, авторизация через Google произошла успешно. Теперь войдите через Trello '
                                   'аккаунт, скопируйте токен и вставьте его с командой /token [токен]',
                          reply_markup=keyboard_login)
+
+
     else:
         msg = "похоже, вы уже логинились. если хотите перелогиниться в этот аккаунт, " \
               + "запретите доступ приложению CalendarTrello по ссылке https://myaccount.google.com/u/0/permissions и " \
@@ -70,13 +68,13 @@ def notify_success_google_auth(chat_id, success):
 
 @bot.message_handler(commands=['help'])
 def help(message):
-    if not os.path.exists(utils.get_google_token_path(message.chat.id)):
+    if not os.path.exists(get_google_token_path(message.chat.id)):
         start(message)
         return
-    if not os.path.exists(utils.get_trello_token_path(message.chat.id)):
+    if not os.path.exists(get_trello_token_path(message.chat.id)):
         notify_success_google_auth(message.chat.id, True)
         return
-    keyboard_week = telebot.types.ReplyKeyboardMarkup(True).row("Текущая неделя", "Следующая неделя")
+
     bot.send_message(message.chat.id, "Введите /get или Текущая неделя для получения событий этой недели.\n"
                      + "Для получения событий следующей недели введите /get_next или Следующая неделя",
                      reply_markup=keyboard_week)
@@ -84,15 +82,15 @@ def help(message):
 
 @bot.message_handler(commands=['token'])
 def token(message):
-    token_trello = (utils.find_after(message.text, '/token '))
+    token_trello = (find_after(message.text, '/token '))
     j = {
         "token": token_trello
     }
-    with open(utils.get_trello_token_path(message.chat.id), "w") as outfile:
+    with open(get_trello_token_path(message.chat.id), "w") as outfile:
         json.dump(j, outfile, sort_keys=True, indent=4)
 
     data = {}
-    utils.save_user_data(message.chat.id, data)
+    save_user_data(message.chat.id, data)
     bot.send_message(message.chat.id, "Токен получен, все ок. /set_board чтобы выбрать доску")
 
 
@@ -100,7 +98,7 @@ def token(message):
 def set_board(message):
     url = "https://api.trello.com/1/members/me/boards?fields=name,url&key={}&token={}".format(
         trello_key,
-        utils.get_trello_token(message.chat.id)
+        get_trello_token(message.chat.id)
     )
     boards = requests.get(url).json()
     parsed_boards = []
@@ -108,7 +106,7 @@ def set_board(message):
     for board in boards:
         parsed_boards.append((board["id"], board["name"]))
         button = types.InlineKeyboardButton(board["name"],
-                                            callback_data='set_board:{}'.format(board["id"]))
+                                            callback_data='set_board:{}, board_name:{}'.format(board["id"],board["name"]))
         keyboard.row(button)
     if len(boards) > 0:
         bot.send_message(message.chat.id, "Выберите доску:", reply_markup=keyboard)
@@ -118,23 +116,28 @@ def set_board(message):
 
 @bot.callback_query_handler(func=lambda call: call.data.startswith('set_board'))
 def handle_set_board(call):
-    board_id = utils.find_after(call.data, "set_board:")
+    board_id = find_between(call.data, "set_board:",', board_name')
+    board_name = find_after(call.data, 'board_name:')
     chat_id = call.message.chat.id
-    user_data = utils.get_user_data(chat_id)
+    user_data = get_user_data(chat_id)
     user_data["board"] = board_id
-    utils.save_user_data(chat_id, user_data)
+    user_data['name'] = board_name
+
+    save_user_data(chat_id, user_data)
+    bot.send_message(chat_id, "Выберана доска: {}. Для получения событий текущей недели введите /get\n"
+                              "Для получения событий следующей недели введите /get_next".format(user_data["name"]),
+                     reply_markup=keyboard_week)
 
 
 @bot.message_handler(func=lambda m: True)
 def handle_message(message):
-    if not os.path.exists(utils.get_google_token_path(message.chat.id)):
+    if not os.path.exists(get_google_token_path(message.chat.id)):
         start(message)
         return
-    if not os.path.exists(utils.get_trello_token_path(message.chat.id)):
+    if not os.path.exists(get_trello_token_path(message.chat.id)):
         notify_success_google_auth(message.chat.id, True)
         return
-
-    if message.reply_to_message is not None and message.reply_to_message.from_user.is_bot:
+    if message.reply_to_message is not None and message.reply_to_message.from_user.is_bot: #TODO реплай ивента или нет
         handle_reply(message)
     else:
         get_calendar(message)
@@ -142,27 +145,44 @@ def handle_message(message):
 
 def handle_reply(message):
     board_url = "https://api.trello.com/1/boards/{}/lists?key={}&token={}".format(
-        utils.get_user_data(message.chat.id)["board"],
+        get_user_data(message.chat.id)["board"],
         trello_key,
-        utils.get_trello_token(message.chat.id)
+        get_trello_token(message.chat.id)
     )
     response = requests.get(board_url).json()
     list_id = response[0]["id"]
+    name_event = find_after(message.reply_to_message.text, " – ")
     url = "https://api.trello.com/1/cards?&key={}&token={}&name={}&desc={}&idList={}".format(
         trello_key,
-        utils.get_trello_token(message.chat.id),
-        "NAME",  # TODO get calendar event name
+        get_trello_token(message.chat.id),
+        name_event,  # TODO get calendar event name
         message.text,
         list_id
     )
-    response = requests.post(url)
-    bot.send_message(message.chat.id, str(response))
+    keyboard_send_trello = types.InlineKeyboardMarkup()
+    url_button = types.InlineKeyboardButton(text="Отправить на доску {}".format(get_user_data(message.chat.id)["name"]), callback_data="send to trello")
+    keyboard_send_trello.row(url_button)
+    bot.send_message(message.chat.id, '{} – {}'.format(message.text, message.reply_to_message.text), reply_markup=keyboard_send_trello)
+
+
+    @bot.callback_query_handler(func=lambda call: True)
+    def callback_inline(call):
+        if call.data == 'send to trello':
+            response = requests.post(url)
+            print(url)
+            print(str(response))
+            if str(response) == '<Response [200]>':
+                bot.send_message(message.chat.id,"Готово")
+
+
+
+
 
 
 def get_calendar(message):
-    if not message.text.startswith("/get"):
+    if not message.text.startswith("/get") and not message.text.endswith("неделя"):
         return
-    token_path = utils.get_google_token_path(message.chat.id)
+    token_path = get_google_token_path(message.chat.id)
     creds = Credentials.from_authorized_user_file(token_path, SCOPES)
 
     try:
@@ -181,23 +201,18 @@ def get_calendar(message):
                                                   timeMax=day_start_week, singleEvents=True,
                                                   orderBy='startTime').execute()
             events = events_result.get('items', [])
-            if not events:
-                bot.send_message(message.chat.id, 'No upcoming events found.')
-            for event in events:
-                start = event['start'].get('dateTime', event['start'].get('date'))
-                start_format = parse(start).date().strftime("%d.%m.%Y") + ' ' + parse(start).strftime("%H:%M")
-                bot.send_message(message.chat.id, start_format + " – " + event['summary'])
+
         elif message.text.lower() == '/get_next' or message.text.lower() == "следующая неделя":
             events_result = service.events().list(calendarId='primary', timeMin=day_start_week,
                                                   timeMax=day_end_week, singleEvents=True,
                                                   orderBy='startTime').execute()
             events = events_result.get('items', [])
-            if not events:
-                bot.send_message(message.chat.id, 'No upcoming events found.')
-            for event in events:
-                start = event['start'].get('dateTime', event['start'].get('date'))
-                start_format = parse(start).date().strftime("%d.%m.%Y") + ' ' + parse(start).strftime("%H:%M")
-                bot.send_message(message.chat.id, start_format + " – " + event['summary'])
+        if not events:
+            bot.send_message(message.chat.id, 'No upcoming events found.')
+        for event in events:
+            start_date = event['start'].get('dateTime', event['start'].get('date'))
+            start_format = parse(start_date).date().strftime("%d.%m.%Y") + ' ' + parse(start_date).strftime("%H:%M")
+            bot.send_message(message.chat.id, start_format + " – " + event['summary'])
         # else:
         #     bot.send_message(message.chat.id, "Выберите неделю.\nТекущая /get .\n" \
         #                      + "Следующая /get_next ", \
@@ -222,33 +237,5 @@ def get_google_auth_url():
     return authorization_url
 
 
-def roundTime(dt=None, roundTo=60):
-    """Round a datetime object to any time laps in seconds
-   dt : datetime.datetime object, default now.
-   roundTo : Closest number of seconds to round to, default 1 minute.
-   Author: Thierry Husson 2012 - Use it as you want but don't blame me.
-   """
-    if dt == None: dt = datetime.datetime.now()
-    seconds = (dt.replace(tzinfo=None) - dt.min).seconds
-    rounding = (seconds + roundTo / 2) // roundTo * roundTo
-    return dt + datetime.timedelta(0, rounding - seconds, -dt.microsecond)
-
-
-def start_end_week():
-    # currentweek
-    now = datetime.datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
-    my_date = datetime.datetime.utcnow()
-    day_number = my_date.weekday()
-    delta = 6 - day_number
-    day_start_week = my_date + datetime.timedelta(delta + 1)
-    day_start_week = roundTime(day_start_week, roundTo=60 * 60)
-    day_end_week = day_start_week + datetime.timedelta(delta + 6)
-    day_end_week = roundTime(day_end_week, roundTo=60 * 60 * 24 - 1)
-    day_end_week = day_end_week.isoformat() + "Z"
-    day_start_week = day_start_week.isoformat() + "Z"
-    return day_start_week, day_end_week, now
-
-
 if __name__ == '__main__':
-    print(bot.get_me())
     bot.infinity_polling()

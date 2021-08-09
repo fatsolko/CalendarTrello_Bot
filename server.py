@@ -1,7 +1,6 @@
 import os
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import requests
-import telebot
 from requests.structures import CaseInsensitiveDict
 import json
 import ssl
