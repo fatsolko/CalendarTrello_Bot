@@ -102,7 +102,7 @@ def set_board(message):
     )
     print(url)
     boards = requests.get(url).json()
-    print(type(boards))
+    print(boards)
     keyboard = types.InlineKeyboardMarkup()
     board_number = 0
     for board in boards:
@@ -115,8 +115,6 @@ def set_board(message):
         user_data["number"] = board_number
 
         save_user_data(message.chat.id, user_data)
-        print(board_name)
-        print(board_id)
         for key in user_data:
             print(key, user_data[key])
         callback_data = 'set_board {}'.format(board_number)
