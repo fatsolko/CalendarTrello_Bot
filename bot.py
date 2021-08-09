@@ -104,22 +104,24 @@ def set_board(message):
     boards = requests.get(url).json()
     print(type(boards))
     keyboard = types.InlineKeyboardMarkup()
-
+    board_number = 0
     for board in boards:
-
+        board_number += 1
         board_id = board["id"]
         board_name = board["name"]
         user_data = get_user_data(message.chat.id) #объект питона в формате json
         user_data["board"] = board_id
         user_data["name"] = board_name
+        user_data["number"] = board_number
 
         save_user_data(message.chat.id, user_data)
         print(board_name)
         print(board_id)
         for key in user_data:
             print(key, user_data[key])
-        # callback_data = 'board_id={},name={}'.format(board_id, board_name)
-        button = types.InlineKeyboardButton(board_name, callback_data='set_board')
+        callback_data = 'set_board {}'.format(board_number)
+        button = types.InlineKeyboardButton('{}. {}'.format(board_number, board_name),
+                                            callback_data=callback_data)
         keyboard.row(button)
     if len(boards) > 0:
         bot.send_message(message.chat.id, "Выберите доску:", reply_markup=keyboard)
