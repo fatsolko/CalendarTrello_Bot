@@ -124,7 +124,7 @@ def handle_set_board(call):
     user_data = get_user_data(chat_id)
     user_data["board"] = board_id
     user_data['name'] = board_name
-
+    #asdasd
     save_user_data(chat_id, user_data)
     bot.send_message(chat_id, "Выберана доска: {}. Для получения событий текущей недели введите /get\n"
                               "Для получения событий следующей недели введите /get_next".format(user_data["name"]),
