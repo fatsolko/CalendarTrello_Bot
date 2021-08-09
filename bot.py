@@ -169,8 +169,8 @@ def handle_reply(message):
 
 @bot.callback_query_handler(func=lambda call: call.data.startswith('send_to_trello'))
 def callback_inline(call):
-    url = utils.find_between(call.data, 'send to trello=', ",chat_id=")
-    chat_id = utils.find_after(call.data, ',chat_id=')
+    url = find_between(call.data, 'send to trello=', ",chat_id=")
+    chat_id = find_after(call.data, ',chat_id=')
     response = requests.post(url)
     print(url)
     print(str(response))
