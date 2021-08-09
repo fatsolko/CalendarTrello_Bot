@@ -111,7 +111,7 @@ def set_board(message):
         user_data = get_user_data(message.chat.id) #объект питона в формате json
         user_data["board"] = board_id
         user_data["name"] = board_name
-
+        #asdasdad
         save_user_data(message.chat.id, user_data)
         print(board_name)
         print(board_id)
