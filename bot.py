@@ -116,7 +116,7 @@ def set_board(message):
         bot.send_message(message.chat.id, "У тебя нет досок")
 
 
-@bot.callback_query_handler(func=lambda call: call.data.startswith('board_'))
+@bot.callback_query_handler(func=lambda call: call.data.startswith('set_board'))
 def handle_set_board(call):
     board_id = find_between(call.data, "board_id=", ',name')
     board_name = find_after(call.data, 'name=')
