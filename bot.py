@@ -104,21 +104,14 @@ def set_board(message):
     boards = requests.get(url).json()
     print(boards)
     keyboard = types.InlineKeyboardMarkup()
-    board_number = 0
+    board_number = -1
+    save_user_data(message.chat.id, boards)
     for board in boards:
         board_number += 1
         board_id = board["id"]
         board_name = board["name"]
-        user_data = get_user_data(message.chat.id) #объект питона в формате json
-        user_data["board"] = board_id
-        user_data["name"] = board_name
-        #asdasdad
-        save_user_data(message.chat.id, user_data)
-        print(board_name)
-        print(board_id)
-        #asdasdadasd
-        callback_data = 'board_id={},name={}'.format(board_id, board_name)
-        button = types.InlineKeyboardButton(board_name, callback_data=callback_data)
+        callback_data = 'board_number is {}'.format(board_number)
+        button = types.InlineKeyboardButton('{}. {}'.format(board_number, board_name), callback_data=callback_data)
         keyboard.row(button)
     if len(boards) > 0:
         bot.send_message(message.chat.id, "Выберите доску:", reply_markup=keyboard)
@@ -126,15 +119,14 @@ def set_board(message):
         bot.send_message(message.chat.id, "У тебя нет досок")
 
 
-@bot.callback_query_handler(func=lambda call: call.data.startswith('set_board'))
+@bot.callback_query_handler(func=lambda call: call.data.startswith('board_number is'))
 def handle_set_board(call):
-    board_id = find_between(call.data, "board_id=", ',name')
-    board_name = find_after(call.data, 'name=')
     chat_id = call.message.chat.id
     user_data = get_user_data(chat_id)
+    board_id = user_data[call.data]['id']
+    board_name = user_data[call.data]['name']
     user_data["board"] = board_id
     user_data['name'] = board_name
-    #asdasd
     save_user_data(chat_id, user_data)
     bot.send_message(chat_id, "Выберана доска: {}. Для получения событий текущей недели введите /get\n"
                               "Для получения событий следующей недели введите /get_next".format(user_data["name"]),
