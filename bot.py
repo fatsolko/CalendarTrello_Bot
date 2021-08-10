@@ -123,8 +123,9 @@ def set_board(message):
 def handle_set_board(call):
     chat_id = call.message.chat.id
     user_data = get_user_data(chat_id)
-    board_id = user_data[call.data]['id']
-    board_name = user_data[call.data]['name']
+    call_data = int(call.data)
+    board_id = user_data[call_data]['id']
+    board_name = user_data[call_data]['name']
     user_data["board"] = board_id
     user_data['name'] = board_name
     save_user_data(chat_id, user_data)
