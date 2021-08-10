@@ -127,15 +127,10 @@ def handle_set_board(call):
     board_id = user_data[call_data]['id']
     board_name = user_data[call_data]['name']
     board_url = user_data[call_data]['url']
-    print(board_name)
-    print(board_url)
-    print(board_id)
-    # user_data["board"] = board_id
-    # user_data['name'] = board_name
-    # save_user_data(chat_id, user_data)
-    # bot.send_message(chat_id, "Выберана доска: {}. Для получения событий текущей недели введите /get\n"
-    #                           "Для получения событий следующей недели введите /get_next".format(user_data["name"]),
-    #                  reply_markup=keyboard_week)
+
+    bot.send_message(chat_id, "Выберана доска: {}. Для получения событий текущей недели введите /get\n"
+                              "Для получения событий следующей недели введите /get_next".format(board_name),
+                     reply_markup=keyboard_week)
 
 
 @bot.message_handler(func=lambda m: True)
@@ -146,7 +141,7 @@ def handle_message(message):
     if not os.path.exists(get_trello_token_path(message.chat.id)):
         notify_success_google_auth(message.chat.id, True)
         return
-    if message.reply_to_message is not None and message.reply_to_message.from_user.is_bot: #TODO реплай ивента или нет
+    if message.reply_to_message is not None and message.reply_to_message.from_user.is_bot:  # TODO реплай ивента или нет
         handle_reply(message)
     else:
         get_calendar(message)
@@ -173,7 +168,8 @@ def handle_reply(message):
     callback_data = "send to trello={},chat_id=".format(url, message.chat.id)
     url_button = types.InlineKeyboardButton(text=button_text, callback_data=callback_data)
     keyboard_send_trello.row(url_button)
-    bot.send_message(message.chat.id, '{} – {}'.format(message.text, message.reply_to_message.text), reply_markup=keyboard_send_trello)
+    bot.send_message(message.chat.id, '{} – {}'.format(message.text, message.reply_to_message.text),
+                     reply_markup=keyboard_send_trello)
 
 
 @bot.callback_query_handler(func=lambda call: call.data.startswith('send_to_trello'))
@@ -185,11 +181,6 @@ def callback_inline(call):
     print(str(response))
     if str(response) == '<Response [200]>':
         bot.send_message(chat_id, "Готово")
-
-
-
-
-
 
 
 def get_calendar(message):
