@@ -35,7 +35,8 @@ def start(message):
     short_url = short.tinyurl.short(auth_url_update)
     url_button = types.InlineKeyboardButton(text="Страница Google авторизации", url=short_url)
     keyboard_login.row(url_button)
-    bot.send_message(message.chat.id, "Перейдите по ссылке ниже для входа через Google аккаунт.", reply_markup=keyboard_login)
+    bot.send_message(message.chat.id, "Перейдите по ссылке ниже для входа через Google аккаунт.",
+                     reply_markup=keyboard_login)
     # \nЗатем войдите через Trello аккаунт, скопируйте токен и вставьте его с командой /token [токен]
 
 
@@ -55,7 +56,9 @@ def notify_success_google_auth(chat_id, success):
                                                        url=short_url_trello)
         keyboard_login.row(url_button_trello)
         bot.send_message(chat_id, 'Авторизация через Google произошла успешно.\nВойдите через Trello '
-                                  'аккаунт по ссылке ниже, скопируйте оттуда код-токен и вставьте его с командой через пробел без квадратных скобок. Пример:\n/token 132fvs5e61466asd7d5d0b1edf38bc020f359dde1313c133d8ed8680a849ff ',
+                                  'аккаунт по ссылке ниже, скопируйте оттуда код-токен'
+                                  ' и вставьте его с командой через пробел без квадратных скобок. '
+                                  'Пример:\n/token 132fvs5e61466asd7d5d0b1edf38bc020f359dde1313c133d8ed8680a849ff ',
                          reply_markup=keyboard_login)
 
 
@@ -91,7 +94,18 @@ def token(message):
 
     data = {}
     save_user_data(message.chat.id, data)
-    bot.send_message(message.chat.id, "Токен получен.\n"
+    if token_trello == "":
+        keyboard_token = telebot.types.ReplyKeyboardMarkup(one_time_keyboard=True,
+                                                           resize_keyboard=True,
+                                                           input_field_placeholder='/token '
+                                                           '132fvs5e61466asd7d5d0b1edf38bc020f359dde1313c133d8ed8680a849ff')
+        bot.send_message(message.chat.id, "Введите токен по примеру:\n"
+                                          "/token "
+                                          "132fvs5e61466asd7d5d0b1edf38bc020f359dde1313c133d8ed8680a849ff",
+                         reply_markup=keyboard_token)
+
+    else:
+        bot.send_message(message.chat.id, "Токен получен.\n"
                                       "/set_board чтобы выбрать доску\n"
                                       "/set_list чтобы выбрать лист")
 
