@@ -117,7 +117,39 @@ def set_board(message):
     if len(boards) > 0:
         bot.send_message(message.chat.id, "Выберите доску:", reply_markup=keyboard)
     else:
-        bot.send_message(message.chat.id, "У тебя нет досок")
+        bot.send_message(message.chat.id, "У вас нет досок")
+
+@bot.message_handler(commands=['set_list'])
+def set_board(message):
+    selected_board = get_user_data(message.chat.id)["selected_board"]
+    selected_board_id = selected_board['id']
+    trello_token = get_trello_token(message.chat.id)
+    list_url = "https://api.trello.com/1/boards/{}/lists?key={}&token={}".format(
+        selected_board_id,
+        trello_key,
+        trello_token
+    )
+    print(list_url)
+    lists = requests.get(list_url).json()
+    print(lists)
+
+
+    list_id = lists
+    selected_board['lists'] = list_id
+    save_user_data(message.chat.id, selected_board)
+    keyboard = types.InlineKeyboardMarkup()
+    user_data = get_user_data(message.chat.id)
+    user_data['lists'] = lists
+    for list in lists:
+        list_id = list["id"]
+        list_name = list["name"]
+        callback_data = 'list_id = {}'.format(list_id)
+        button = types.InlineKeyboardButton('{}'.format(list_name), callback_data=callback_data)
+        keyboard.row(button)
+    if len(lists) > 0:
+        bot.send_message(message.chat.id, "Выберите лист:", reply_markup=keyboard)
+    else:
+        bot.send_message(message.chat.id, "У вас нет листов")
 
 
 @bot.callback_query_handler(func=lambda call: call.data.startswith('id = '))
@@ -152,21 +184,21 @@ def handle_message(message):
 
 
 def handle_reply(message):
-    selected_board = get_user_data(message.chat.id)["selected_board"]
-    selected_board_id = selected_board['id']
-    trello_token = get_trello_token(message.chat.id)
-    board_url = "https://api.trello.com/1/boards/{}/lists?key={}&token={}".format(
-        selected_board_id,
-        trello_key,
-        trello_token
-    )
-    print(board_url)
+    # selected_board = get_user_data(message.chat.id)["selected_board"]
+    # selected_board_id = selected_board['id']
+    # trello_token = get_trello_token(message.chat.id)
+    # board_url = "https://api.trello.com/1/boards/{}/lists?key={}&token={}".format(
+    #     selected_board_id,
+    #     trello_key,
+    #     trello_token
+    # )
+    # print(board_url)
 
-    response = requests.get(board_url).json() # список листов
-    print(response)
-    list_id = response["id"]
-    selected_board['lists'] = list_id
-    save_user_data(message.chat.id, selected_board)
+    # response = requests.get(board_url).json() # список листов
+    # print(response)
+    # list_id = response
+    # selected_board['lists'] = list_id
+    # save_user_data(message.chat.id, selected_board)
     name_event = find_after(message.reply_to_message.text, " – ")
     url = "https://api.trello.com/1/cards?&key={}&token={}&name={}&desc={}&idList={}".format(
         trello_key,
@@ -178,7 +210,6 @@ def handle_reply(message):
 
     short_url = pyshorteners.Shortener()
     short_post_url = short_url.tinyurl.short(url)
-
     keyboard_send_trello = types.InlineKeyboardMarkup()
     name_selected_board = selected_board["name"]
     button_text = "Отправить на доску {}".format(name_selected_board)
