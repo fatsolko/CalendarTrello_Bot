@@ -199,7 +199,7 @@ def handle_message(message):
 
 def handle_reply(message):
     user_data = get_user_data(message.chat.id)
-    selected_list_id = user_data['selected_list']['id']
+    selected_list_id = user_data['selected_board']['selected_list']['id']
     name_event = find_after(message.reply_to_message.text, " – ")
     url = "https://api.trello.com/1/cards?&key={}&token={}&name={}&desc={}&idList={}".format(
         trello_key,
