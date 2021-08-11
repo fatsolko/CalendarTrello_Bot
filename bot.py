@@ -190,7 +190,7 @@ def handle_reply(message):
 @bot.callback_query_handler(func=lambda call: call.data.startswith('send='))
 def callback_inline(call):
     url = find_after(call.data, 'send=')
-    chat_id = call.id
+    chat_id = call.message.chat.id
     response = requests.post(url)
     print(url)
     print(str(response))
