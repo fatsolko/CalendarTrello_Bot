@@ -95,8 +95,6 @@ def token(message):
     data = {}
     save_user_data(message.chat.id, data)
     if token_trello == "":
-        keyboard_token = telebot.types.ReplyKeyboardMarkup(input_field_placeholder='/token '
-                                                           '132fvs5e61466asd7d5d0b1edf38bc020f359dde1313c133d8ed8680a849ff')
         bot.send_message(message.chat.id, "Введите токен по примеру:\n"
                                           "/token "
                                           "132fvs5e61466asd7d5d0b1edf38bc020f359dde1313c133d8ed8680a849ff",
@@ -132,7 +130,14 @@ def set_board(message):
         else:
             bot.send_message(message.chat.id, "У вас нет досок")
     except KeyError as e:
-        bot.send_message(message.chat.id, "{}Вы не выбрали доску \n /set_board".format(e))
+        if e == 'selected_board':
+            bot.send_message(message.chat.id, "{}Вы не выбрали доску \n /set_board".format(e))
+    except ValueError as v:
+        bot.send_message(message.chat.id, "{}Введите токен по примеру:\n"
+                                          "/token "
+                                          "132fvs5e61466asd7d5d0b1edf38bc020f359dde1313c133d8ed8680a849ff".format(v),
+                         reply_markup=keyboard_token)
+
 
 
 @bot.message_handler(commands=['set_list'])
