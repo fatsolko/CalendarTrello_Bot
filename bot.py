@@ -163,8 +163,7 @@ def handle_set_board(call):
             new_data = get_user_data(chat_id)
             new_data["selected_board"] = board
             save_user_data(chat_id, new_data)
-            bot.send_message(chat_id, "Выберана доска: {}. Для получения событий текущей недели введите /get\n"
-                                      "Для получения событий следующей недели введите /get_next".format(name),
+            bot.send_message(chat_id, "Выберана доска: {}.\nВыберите лист /set_list".format(name),
                              reply_markup=keyboard_week)
 
 
@@ -180,7 +179,7 @@ def handle_set_list(call):
             new_data = get_user_data(chat_id)
             new_data["selected_board"]["selected_list"] = list_count
             save_user_data(chat_id, new_data)
-            bot.send_message(chat_id, "Выберан лист: {}. Для получения событий текущей недели введите /get\n"
+            bot.send_message(chat_id, "Выберан лист: {}.\nДля получения событий текущей недели введите /get\n"
                                       "Для получения событий следующей недели введите /get_next".format(name),
                              reply_markup=keyboard_week)
 
