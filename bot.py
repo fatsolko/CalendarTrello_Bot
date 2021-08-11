@@ -180,7 +180,7 @@ def handle_reply(message):
     keyboard_send_trello = types.InlineKeyboardMarkup()
     name_selected_board = selected_board["name"]
     button_text = "Отправить на доску {}".format(name_selected_board)
-    callback_data = "send={},chat_id=".format(short_post_url, message.chat.id)
+    callback_data = "send={}".format(short_post_url)
     url_button = types.InlineKeyboardButton(text=button_text, callback_data=callback_data)
     keyboard_send_trello.row(url_button)
     bot.send_message(message.chat.id, '{} – {}'.format(message.text, message.reply_to_message.text),
@@ -189,8 +189,8 @@ def handle_reply(message):
 
 @bot.callback_query_handler(func=lambda call: call.data.startswith('send='))
 def callback_inline(call):
-    url = find_between(call.data, 'send=', ",chat_id=")
-    chat_id = find_after(call.data, ',chat_id=')
+    url = find_after(call.data, 'send=')
+    chat_id = call.id
     response = requests.post(url)
     print(url)
     print(str(response))
