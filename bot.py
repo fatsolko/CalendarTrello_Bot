@@ -122,7 +122,7 @@ def set_board(message):
     except ValueError as v:
         bot.send_message(message.chat.id, "Неверный токен. Введите токен по примеру:\n"
                                           "/token 132fvs5e61466asd7af",
-                         reply_markup=keyboard_)
+                         reply_markup=keyboard_login_trello)
 
 
 @bot.message_handler(commands=['set_list'])
