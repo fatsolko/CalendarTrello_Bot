@@ -91,7 +91,9 @@ def token(message):
 
     data = {}
     save_user_data(message.chat.id, data)
-    bot.send_message(message.chat.id, "Токен получен, все ок. /set_board чтобы выбрать доску")
+    bot.send_message(message.chat.id, "Токен получен, все ок.\n"
+                                      "/set_board чтобы выбрать доску\n"
+                                      "/set_list чтобы выбрать лист")
 
 
 @bot.message_handler(commands=['set_board'])
@@ -102,7 +104,7 @@ def set_board(message):
     )
     print(url)
     boards = requests.get(url).json()
-    print(boards)
+
     keyboard = types.InlineKeyboardMarkup()
     user_data = get_user_data(message.chat.id)
     user_data['boards'] = boards
@@ -131,14 +133,16 @@ def set_board(message):
     )
     print(list_url)
     lists = requests.get(list_url).json()
-    print(lists)
-
 
     list_id = lists
     selected_board['lists'] = list_id
-    save_user_data(message.chat.id, selected_board)
-    keyboard = types.InlineKeyboardMarkup()
     user_data = get_user_data(message.chat.id)
+    user_data['selected_board'] = selected_board
+
+    save_user_data(message.chat.id, user_data)
+
+    keyboard = types.InlineKeyboardMarkup()
+
     user_data['lists'] = lists
     for list in lists:
         list_id = list["id"]
@@ -199,13 +203,14 @@ def handle_reply(message):
     # list_id = response
     # selected_board['lists'] = list_id
     # save_user_data(message.chat.id, selected_board)
+    selected_list_id =
     name_event = find_after(message.reply_to_message.text, " – ")
     url = "https://api.trello.com/1/cards?&key={}&token={}&name={}&desc={}&idList={}".format(
         trello_key,
         get_trello_token(message.chat.id),
         name_event,  # TODO get calendar event name
         message.text,
-        list_id
+        selected_list_id
     )
 
     short_url = pyshorteners.Shortener()
