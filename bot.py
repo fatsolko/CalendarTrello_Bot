@@ -33,9 +33,9 @@ def start(message):
     auth_url_update = 'https://beetzung.com/login?user={}&auth_link={}'.format(message.chat.id, auth_url)
     short = pyshorteners.Shortener()
     short_url = short.tinyurl.short(auth_url_update)
-    url_button = types.InlineKeyboardButton(text="Google", url=short_url)
+    url_button = types.InlineKeyboardButton(text="Страница Google авторизации", url=short_url)
     keyboard_login.row(url_button)
-    bot.send_message(message.chat.id, "Войдите через Google аккаунт.", reply_markup=keyboard_login)
+    bot.send_message(message.chat.id, "Перейдите по ссылке ниже для входа через Google аккаунт.", reply_markup=keyboard_login)
     # \nЗатем войдите через Trello аккаунт, скопируйте токен и вставьте его с командой /token [токен]
 
 
@@ -51,11 +51,11 @@ def notify_success_google_auth(chat_id, success):
 
         short_trello = pyshorteners.Shortener()
         short_url_trello = short_trello.tinyurl.short(auth_url_update_trello)
-        url_button_trello = types.InlineKeyboardButton(text="Trello",
+        url_button_trello = types.InlineKeyboardButton(text="Страница Trello авторизации",
                                                        url=short_url_trello)
         keyboard_login.row(url_button_trello)
-        bot.send_message(chat_id, 'Ура, авторизация через Google произошла успешно. Теперь войдите через Trello '
-                                  'аккаунт, скопируйте токен и вставьте его с командой /token [токен]',
+        bot.send_message(chat_id, 'Авторизация через Google произошла успешно.\nВойдите через Trello '
+                                  'аккаунт по ссылке ниже, скопируйте оттуда код-токен и вставьте его с командой через пробел без квадратных скобок. Пример:\n/token 132fvs5e61466asd7d5d0b1edf38bc020f359dde1313c133d8ed8680a849ff ',
                          reply_markup=keyboard_login)
 
 
@@ -98,57 +98,63 @@ def token(message):
 
 @bot.message_handler(commands=['set_board'])
 def set_board(message):
-    url = "https://api.trello.com/1/members/me/boards?fields=name,url&key={}&token={}".format(
-        trello_key,
-        get_trello_token(message.chat.id))
-    print(url)
-    boards = requests.get(url).json()
-    keyboard = types.InlineKeyboardMarkup()
-    user_data = get_user_data(message.chat.id)
-    user_data['boards'] = boards
-    save_user_data(message.chat.id, user_data)
-    boards = user_data["boards"]
-    for board in boards:
-        board_id = board["id"]
-        board_name = board["name"]
-        callback_data = 'id = {}'.format(board_id)
-        button = types.InlineKeyboardButton('{}'.format(board_name), callback_data=callback_data)
-        keyboard.row(button)
-    if len(boards) > 0:
-        bot.send_message(message.chat.id, "Выберите доску:", reply_markup=keyboard)
-    else:
-        bot.send_message(message.chat.id, "У вас нет досок")
+    try:
+        url = "https://api.trello.com/1/members/me/boards?fields=name,url&key={}&token={}".format(
+            trello_key,
+            get_trello_token(message.chat.id))
+        print(url)
+        boards = requests.get(url).json()
+        keyboard = types.InlineKeyboardMarkup()
+        user_data = get_user_data(message.chat.id)
+        user_data['boards'] = boards
+        save_user_data(message.chat.id, user_data)
+        boards = user_data["boards"]
+        for board in boards:
+            board_id = board["id"]
+            board_name = board["name"]
+            callback_data = 'id = {}'.format(board_id)
+            button = types.InlineKeyboardButton('{}'.format(board_name), callback_data=callback_data)
+            keyboard.row(button)
+        if len(boards) > 0:
+            bot.send_message(message.chat.id, "Выберите доску:", reply_markup=keyboard)
+        else:
+            bot.send_message(message.chat.id, "У вас нет досок")
+    except KeyError:
+        bot.send_message(message.chat.id, "Вы не выбрали доску \n /set_board")
 
 
 @bot.message_handler(commands=['set_list'])
 def set_board(message):
-    selected_board = get_user_data(message.chat.id)["selected_board"]
-    selected_board_id = selected_board['id']
-    trello_token = get_trello_token(message.chat.id)
-    list_url = "https://api.trello.com/1/boards/{}/lists?key={}&token={}".format(
-        selected_board_id,
-        trello_key,
-        trello_token
-    )
-    print(list_url)
-    lists = requests.get(list_url).json()
-    list_id = lists
-    selected_board['lists'] = list_id
-    user_data = get_user_data(message.chat.id)
-    user_data['selected_board'] = selected_board
-    save_user_data(message.chat.id, user_data)
-    keyboard = types.InlineKeyboardMarkup()
-    user_data['lists'] = lists
-    for board_list in lists:
-        list_id = board_list["id"]
-        list_name = board_list["name"]
-        callback_data = 'list_id = {}'.format(list_id)
-        button = types.InlineKeyboardButton('{}'.format(list_name), callback_data=callback_data)
-        keyboard.row(button)
-    if len(lists) > 0:
-        bot.send_message(message.chat.id, "Выберите лист:", reply_markup=keyboard)
-    else:
-        bot.send_message(message.chat.id, "У вас нет листов")
+    try:
+        selected_board = get_user_data(message.chat.id)["selected_board"]
+        selected_board_id = selected_board['id']
+        trello_token = get_trello_token(message.chat.id)
+        list_url = "https://api.trello.com/1/boards/{}/lists?key={}&token={}".format(
+            selected_board_id,
+            trello_key,
+            trello_token
+        )
+        print(list_url)
+        lists = requests.get(list_url).json()
+        list_id = lists
+        selected_board['lists'] = list_id
+        user_data = get_user_data(message.chat.id)
+        user_data['selected_board'] = selected_board
+        save_user_data(message.chat.id, user_data)
+        keyboard = types.InlineKeyboardMarkup()
+        user_data['lists'] = lists
+        for board_list in lists:
+            list_id = board_list["id"]
+            list_name = board_list["name"]
+            callback_data = 'list_id = {}'.format(list_id)
+            button = types.InlineKeyboardButton('{}'.format(list_name), callback_data=callback_data)
+            keyboard.row(button)
+        if len(lists) > 0:
+            bot.send_message(message.chat.id, "Выберите лист:", reply_markup=keyboard)
+        else:
+            bot.send_message(message.chat.id, "У вас нет листов")
+    except KeyError:
+        bot.send_message(message.chat.id, "Вы не выбрали лист \n /set_list")
 
 
 @bot.callback_query_handler(func=lambda call: call.data.startswith('id = '))
@@ -217,7 +223,7 @@ def handle_reply(message):
     keyboard_send_trello = types.InlineKeyboardMarkup()
     name_selected_board = user_data['selected_board']["name"]
     name_selected_list = user_data['selected_board']["selected_list"]['name']
-    button_text = "Отправить на доску {}\nЛист {}".format(name_selected_board, name_selected_list)
+    button_text = "Отправить на доску \"{}\" в лист \"{}\"".format(name_selected_board, name_selected_list)
     callback_data = "send={}".format(short_post_url)
     url_button = types.InlineKeyboardButton(text=button_text, callback_data=callback_data)
     keyboard_send_trello.row(url_button)
