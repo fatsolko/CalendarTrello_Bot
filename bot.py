@@ -203,7 +203,8 @@ def handle_reply(message):
     # list_id = response
     # selected_board['lists'] = list_id
     # save_user_data(message.chat.id, selected_board)
-    selected_list_id =
+    user_data = get_user_data(message.chat.id)
+    selected_list_id = '60b7b698530bfd733147435a'
     name_event = find_after(message.reply_to_message.text, " – ")
     url = "https://api.trello.com/1/cards?&key={}&token={}&name={}&desc={}&idList={}".format(
         trello_key,
@@ -216,7 +217,7 @@ def handle_reply(message):
     short_url = pyshorteners.Shortener()
     short_post_url = short_url.tinyurl.short(url)
     keyboard_send_trello = types.InlineKeyboardMarkup()
-    name_selected_board = selected_board["name"]
+    name_selected_board = user_data['selected_board']["name"]
     button_text = "Отправить на доску {}".format(name_selected_board)
     callback_data = "send={}".format(short_post_url)
     url_button = types.InlineKeyboardButton(text=button_text, callback_data=callback_data)
