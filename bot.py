@@ -105,7 +105,7 @@ def set_board(message):
     print(boards)
     keyboard = types.InlineKeyboardMarkup()
     user_data = get_user_data(message.chat.id)
-    user_data['boards'] = boards
+    user_data[boards] = boards
     save_user_data(message.chat.id, boards)
     for board in boards:
         board_id = board["id"]
