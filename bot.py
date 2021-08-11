@@ -104,14 +104,14 @@ def set_board(message):
     boards = requests.get(url).json()
     print(boards)
     keyboard = types.InlineKeyboardMarkup()
-    board_number = -1
+    user_data = get_user_data(message.chat.id)
+    user_data['boards'] = boards
     save_user_data(message.chat.id, boards)
     for board in boards:
-        board_number += 1
         board_id = board["id"]
         board_name = board["name"]
-        callback_data = 'board_number is {}'.format(board_number)
-        button = types.InlineKeyboardButton('{}. {}'.format(board_number, board_name), callback_data=callback_data)
+        callback_data = 'id = {}'.format(board_id)
+        button = types.InlineKeyboardButton('{}'.format(board_name), callback_data=callback_data)
         keyboard.row(button)
     if len(boards) > 0:
         bot.send_message(message.chat.id, "Выберите доску:", reply_markup=keyboard)
@@ -119,18 +119,30 @@ def set_board(message):
         bot.send_message(message.chat.id, "У тебя нет досок")
 
 
-@bot.callback_query_handler(func=lambda call: call.data.startswith('board_number is'))
+@bot.callback_query_handler(func=lambda call: call.data.startswith('id = '))
 def handle_set_board(call):
+    board_id = find_after(call.data,'id = ')
     chat_id = call.message.chat.id
     user_data = get_user_data(chat_id)
-    call_data = int(find_after(call.data, 'board_number is '))
-    board_id = user_data[call_data]['id']
-    board_name = user_data[call_data]['name']
-    board_url = user_data[call_data]['url']
+    boards = user_data['boards']
+    for board in boards:
+        if board["id"] == board_id:
+            name = board[name]
+            new_data = get_user_data(chat_id)
+            new_data["selected_board"] = board
+            bot.send_message(chat_id, "vy vcybrali dosku " + name)
 
-    bot.send_message(chat_id, "Выберана доска: {}. Для получения событий текущей недели введите /get\n"
-                              "Для получения событий следующей недели введите /get_next".format(board_name),
-                     reply_markup=keyboard_week)
+
+
+
+    # call_data = int(find_after(call.data, 'board_number is '))
+    # board_id = user_data[call_data]['id']
+    # board_name = user_data[call_data]['name']
+
+
+    # bot.send_message(chat_id, "Выберана доска: {}. Для получения событий текущей недели введите /get\n"
+    #                           "Для получения событий следующей недели введите /get_next".format(board_name),
+    #                  reply_markup=keyboard_week)
 
 
 @bot.message_handler(func=lambda m: True)
@@ -153,6 +165,7 @@ def handle_reply(message):
         trello_key,
         get_trello_token(message.chat.id)
     )
+
     response = requests.get(board_url).json()
     list_id = response[0]["id"]
     name_event = find_after(message.reply_to_message.text, " – ")
