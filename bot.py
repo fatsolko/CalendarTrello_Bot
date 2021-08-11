@@ -152,13 +152,18 @@ def handle_message(message):
 
 
 def handle_reply(message):
+    set_board = get_user_data(message.chat.id)["set_board"]
+    set_board_id = set_board['id']
+    trello_token = get_trello_token(message.chat.id)
     board_url = "https://api.trello.com/1/boards/{}/lists?key={}&token={}".format(
-        get_user_data(message.chat.id)["board"],
+        set_board_id,
         trello_key,
-        get_trello_token(message.chat.id)
+        trello_token
     )
+    print(board_url)
 
     response = requests.get(board_url).json()
+    print(response)
     list_id = response[0]["id"]
     name_event = find_after(message.reply_to_message.text, " – ")
     url = "https://api.trello.com/1/cards?&key={}&token={}&name={}&desc={}&idList={}".format(
