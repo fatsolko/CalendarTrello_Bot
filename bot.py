@@ -173,10 +173,14 @@ def handle_reply(message):
         message.text,
         list_id
     )
+
+    short_url = pyshorteners.Shortener()
+    short_post_url = short_url.tinyurl.short(url)
+
     keyboard_send_trello = types.InlineKeyboardMarkup()
     name_selected_board = selected_board["name"]
     button_text = "Отправить на доску {}".format(name_selected_board)
-    callback_data = "send to trello={},chat_id=".format(url, message.chat.id)
+    callback_data = "send={},chat_id=".format(short_post_url, message.chat.id)
     url_button = types.InlineKeyboardButton(text=button_text, callback_data=callback_data)
     keyboard_send_trello.row(url_button)
     bot.send_message(message.chat.id, '{} – {}'.format(message.text, message.reply_to_message.text),
