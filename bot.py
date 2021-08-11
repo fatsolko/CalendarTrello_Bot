@@ -131,19 +131,10 @@ def handle_set_board(call):
             name = board['name']
             new_data = get_user_data(chat_id)
             new_data["selected_board"] = board
-            bot.send_message(chat_id, "vy vcybrali dosku " + name)
-
-
-
-
-    # call_data = int(find_after(call.data, 'board_number is '))
-    # board_id = user_data[call_data]['id']
-    # board_name = user_data[call_data]['name']
-
-
-    # bot.send_message(chat_id, "Выберана доска: {}. Для получения событий текущей недели введите /get\n"
-    #                           "Для получения событий следующей недели введите /get_next".format(board_name),
-    #                  reply_markup=keyboard_week)
+            save_user_data(chat_id, new_data)
+            bot.send_message(chat_id, "Выберана доска: {}. Для получения событий текущей недели введите /get\n"
+                                      "Для получения событий следующей недели введите /get_next".format(name),
+                             reply_markup=keyboard_week)
 
 
 @bot.message_handler(func=lambda m: True)
