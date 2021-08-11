@@ -122,7 +122,7 @@ def set_board(message):
 
 @bot.callback_query_handler(func=lambda call: call.data.startswith('id = '))
 def handle_set_board(call):
-    board_id = find_after(call.data,'id = ')
+    board_id = find_after(call.data, 'id = ')
     chat_id = call.message.chat.id
     user_data = get_user_data(chat_id)
     boards = user_data["boards"]
@@ -152,7 +152,7 @@ def handle_message(message):
 
 
 def handle_reply(message):
-    set_board = get_user_data(message.chat.id)["set_board"]
+    set_board = get_user_data(message.chat.id)["selected_board"]
     set_board_id = set_board['id']
     trello_token = get_trello_token(message.chat.id)
     board_url = "https://api.trello.com/1/boards/{}/lists?key={}&token={}".format(
