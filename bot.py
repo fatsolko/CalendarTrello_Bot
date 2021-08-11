@@ -91,7 +91,7 @@ def token(message):
 
     data = {}
     save_user_data(message.chat.id, data)
-    bot.send_message(message.chat.id, "Токен получен, все ок.\n"
+    bot.send_message(message.chat.id, "Токен получен.\n"
                                       "/set_board чтобы выбрать доску\n"
                                       "/set_list чтобы выбрать лист")
 
@@ -163,8 +163,7 @@ def handle_set_board(call):
             new_data = get_user_data(chat_id)
             new_data["selected_board"] = board
             save_user_data(chat_id, new_data)
-            bot.send_message(chat_id, "Выберана доска: {}.\nВыберите лист /set_list".format(name),
-                             reply_markup=keyboard_week)
+            bot.send_message(chat_id, "Выберана доска: {}.\nВыберите лист /set_list".format(name))
 
 
 @bot.callback_query_handler(func=lambda call: call.data.startswith('list_id = '))
@@ -179,8 +178,8 @@ def handle_set_list(call):
             new_data = get_user_data(chat_id)
             new_data["selected_board"]["selected_list"] = list_count
             save_user_data(chat_id, new_data)
-            bot.send_message(chat_id, "Выберан лист: {}.\nДля получения событий текущей недели введите /get\n"
-                                      "Для получения событий следующей недели введите /get_next".format(name),
+            bot.send_message(chat_id, "Выберан лист: {}.\n/get события текущей недели \n"
+                                      "/get_next события следующей недели ".format(name),
                              reply_markup=keyboard_week)
 
 
