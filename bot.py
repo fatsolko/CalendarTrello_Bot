@@ -169,7 +169,7 @@ def set_board(message):
         else:
             bot.send_message(message.chat.id, "У вас нет листов")
     except KeyError as e:
-        bot.send_message(message.chat.id, "{}Вы не выбрали лист \n /set_list".format(e))
+        bot.send_message(message.chat.id, "{}Вы не выбрали доску \n /set_board".format(e))
 
 
 @bot.callback_query_handler(func=lambda call: call.data.startswith('id = '))
@@ -224,30 +224,33 @@ def handle_message(message):
 def handle_reply(message):
     try:
         user_data = get_user_data(message.chat.id)
-        selected_list_id = user_data['selected_board']['selected_list']['id']
-        name_event = find_after(message.reply_to_message.text, " – ")
-        url = "https://api.trello.com/1/cards?&key={}&token={}&name={}&desc={}&idList={}".format(
-            trello_key,
-            get_trello_token(message.chat.id),
-            name_event,  # TODO get calendar event name
-            message.text,
-            selected_list_id
-        )
+        if len(user_data) > 0:
+            selected_list_id = user_data['selected_board']['selected_list']['id']
+            name_event = find_after(message.reply_to_message.text, " – ")
+            url = "https://api.trello.com/1/cards?&key={}&token={}&name={}&desc={}&idList={}".format(
+                trello_key,
+                get_trello_token(message.chat.id),
+                name_event,  # TODO get calendar event name
+                message.text,
+                selected_list_id
+            )
 
-        short_url = pyshorteners.Shortener()
-        short_post_url = short_url.tinyurl.short(url)
-        keyboard_send_trello = types.InlineKeyboardMarkup()
-        name_selected_board = user_data['selected_board']["name"]
-        name_selected_list = user_data['selected_board']["selected_list"]['name']
-        button_text = "Отправить на доску \"{}\" в лист \"{}\"".format(name_selected_board, name_selected_list)
-        callback_data = "send={}".format(short_post_url)
-        url_button = types.InlineKeyboardButton(text=button_text, callback_data=callback_data)
-        keyboard_send_trello.row(url_button)
-        bot.send_message(message.chat.id, '{} – {}'.format(message.text, message.reply_to_message.text),
-                         reply_markup=keyboard_send_trello)
+            short_url = pyshorteners.Shortener()
+            short_post_url = short_url.tinyurl.short(url)
+            keyboard_send_trello = types.InlineKeyboardMarkup()
+            name_selected_board = user_data['selected_board']["name"]
+            name_selected_list = user_data['selected_board']["selected_list"]['name']
+            button_text = "Отправить на доску \"{}\" в лист \"{}\"".format(name_selected_board, name_selected_list)
+            callback_data = "send={}".format(short_post_url)
+            url_button = types.InlineKeyboardButton(text=button_text, callback_data=callback_data)
+            keyboard_send_trello.row(url_button)
+            bot.send_message(message.chat.id, '{} – {}'.format(message.text, message.reply_to_message.text),
+                             reply_markup=keyboard_send_trello)
+        else:
+            bot.send_message(message.chat.id, "Вы не выбрали доску \n /set_board")
     except KeyError as e:
         if e == 'selected_board':
-            bot.send_message(message.chat.id, "{}Вы не выбрали доску или лист \n /set_list".format(e))
+            bot.send_message(message.chat.id, "{}Вы не выбрали доску \n /set_board".format(e))
         elif e == 'selected_list':
             bot.send_message(message.chat.id, "{}Вы не выбрали лист \n /set_list".format(e))
 
