@@ -152,11 +152,11 @@ def handle_message(message):
 
 
 def handle_reply(message):
-    set_board = get_user_data(message.chat.id)["selected_board"]
-    set_board_id = set_board['id']
+    selected_board = get_user_data(message.chat.id)["selected_board"]
+    selected_board_id = selected_board['id']
     trello_token = get_trello_token(message.chat.id)
     board_url = "https://api.trello.com/1/boards/{}/lists?key={}&token={}".format(
-        set_board_id,
+        selected_board_id,
         trello_key,
         trello_token
     )
@@ -174,7 +174,8 @@ def handle_reply(message):
         list_id
     )
     keyboard_send_trello = types.InlineKeyboardMarkup()
-    button_text = "Отправить на доску {}".format(get_user_data(message.chat.id)["name"])
+    name_selected_board = selected_board["name"]
+    button_text = "Отправить на доску {}".format(name_selected_board)
     callback_data = "send to trello={},chat_id=".format(url, message.chat.id)
     url_button = types.InlineKeyboardButton(text=button_text, callback_data=callback_data)
     keyboard_send_trello.row(url_button)
