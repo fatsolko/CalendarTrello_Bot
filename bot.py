@@ -42,24 +42,12 @@ def start(message):
 
 def notify_success_google_auth(chat_id, success):
     if success:
-        keyboard_login = types.InlineKeyboardMarkup()
-        auth_url_update_trello = 'https://trello.com/1/authorize?' \
-                                 'key={}&' \
-                                 'expiration=never&' \
-                                 'name=CalendarTrello&' \
-                                 'scope=read,write&' \
-                                 'response_type=token'.format(trello_key)
 
-        short_trello = pyshorteners.Shortener()
-        short_url_trello = short_trello.tinyurl.short(auth_url_update_trello)
-        url_button_trello = types.InlineKeyboardButton(text="Страница Trello авторизации",
-                                                       url=short_url_trello)
-        keyboard_login.row(url_button_trello)
-        bot.send_message(chat_id, 'Авторизация через Google произошла успешно.\nВойдите через Trello '
+        bot.send_message(chat_id, 'Авторизация через Google произошла успешно.\n\nВойдите через Trello '
                                   'аккаунт по ссылке ниже, скопируйте оттуда код-токен'
-                                  ' и вставьте его с командой через пробел без квадратных скобок. '
-                                  'Пример:\n/token 132fvs5e61466asd7d5d0b1edf38bc020f359dde1313c133d8ed8680a849ff ',
-                         reply_markup=keyboard_login)
+                                  ' и напишите боту вставив код с командой через пробел без квадратных скобок. '
+                                  'Пример:\n/token 132fvs5e61466asd7da849ff ',
+                         reply_markup=keyboard_login_trello)
 
 
     else:
@@ -134,7 +122,7 @@ def set_board(message):
     except ValueError as v:
         bot.send_message(message.chat.id, "Неверный токен. Введите токен по примеру:\n"
                                           "/token 132fvs5e61466asd7af",
-                         reply_markup=keyboard_token)
+                         reply_markup=keyboard_)
 
 
 @bot.message_handler(commands=['set_list'])

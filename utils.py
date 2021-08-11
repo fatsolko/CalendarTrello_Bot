@@ -1,6 +1,24 @@
 import json
 import datetime
 import telebot
+import pyshorteners
+
+f = open('credentials.json')
+credentials = json.load(f)["web"]
+trello_key = credentials["trello_key"]
+keyboard_login_trello = telebot.types.InlineKeyboardMarkup()
+auth_url_update_trello = 'https://trello.com/1/authorize?' \
+                         'key={}&' \
+                         'expiration=never&' \
+                         'name=CalendarTrello&' \
+                         'scope=read,write&' \
+                         'response_type=token'.format(trello_key)
+
+short_trello = pyshorteners.Shortener()
+short_url_trello = short_trello.tinyurl.short(auth_url_update_trello)
+url_button_trello = telebot.types.InlineKeyboardButton(text="Страница Trello авторизации",
+                                               url=short_url_trello)
+keyboard_login_trello.row(url_button_trello)
 
 keyboard_week = telebot.types.ReplyKeyboardMarkup(one_time_keyboard=True,
                                                   resize_keyboard=True,
