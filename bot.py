@@ -125,10 +125,10 @@ def handle_set_board(call):
     board_id = find_after(call.data,'id = ')
     chat_id = call.message.chat.id
     user_data = get_user_data(chat_id)
-    boards = user_data['boards']
+    boards = user_data["boards"]
     for board in boards:
         if board["id"] == board_id:
-            name = board[name]
+            name = board['name']
             new_data = get_user_data(chat_id)
             new_data["selected_board"] = board
             bot.send_message(chat_id, "vy vcybrali dosku " + name)
