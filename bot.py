@@ -162,9 +162,11 @@ def handle_reply(message):
     )
     print(board_url)
 
-    response = requests.get(board_url).json()
+    response = requests.get(board_url).json() # список листов
     print(response)
-    list_id = response[0]["id"]
+    list_id = response["id"]
+    selected_board['lists'] = list_id
+    save_user_data(message.chat.id, selected_board)
     name_event = find_after(message.reply_to_message.text, " – ")
     url = "https://api.trello.com/1/cards?&key={}&token={}&name={}&desc={}&idList={}".format(
         trello_key,
