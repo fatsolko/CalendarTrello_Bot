@@ -8,6 +8,7 @@ keyboard_week = telebot.types.ReplyKeyboardMarkup(one_time_keyboard=True,
                                                                                                    "Следующая неделя")
 keyboard_token = telebot.types.ReplyKeyboardMarkup(input_field_placeholder='/token '
                                                            '132fvs5e61466asd7d5d0b1edf38bc020f359dde1313c133d8ed8680a849ff')
+hideBoard = telebot.types.ReplyKeyboardRemove()
 
 
 def get_google_token_path(chat_id):

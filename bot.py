@@ -63,10 +63,10 @@ def notify_success_google_auth(chat_id, success):
 
 
     else:
-        msg = "похоже, вы уже логинились. если хотите перелогиниться в этот аккаунт, " \
+        msg = "Похоже, вы уже логинились. Если хотите перелогиниться в этот аккаунт, " \
               + "запретите доступ приложению CalendarTrello по ссылке https://myaccount.google.com/u/0/permissions и " \
               + "попробуйте еще раз: /start"
-        bot.send_message(chat_id, msg)
+        bot.send_message(chat_id, msg, reply_markup=hideBoard)
 
 
 @bot.message_handler(commands=['help'])
@@ -101,8 +101,8 @@ def token(message):
 
     else:
         bot.send_message(message.chat.id, "Токен получен.\n"
-                                      "/set_board чтобы выбрать доску\n"
-                                      "/set_list чтобы выбрать лист")
+                                          "/set_board чтобы выбрать доску\n"
+                                          "/set_list чтобы выбрать лист", reply_markup=hideBoard)
 
 
 @bot.message_handler(commands=['set_board'])
@@ -127,15 +127,14 @@ def set_board(message):
         if len(boards) > 0:
             bot.send_message(message.chat.id, "Выберите доску:", reply_markup=keyboard)
         else:
-            bot.send_message(message.chat.id, "У вас нет досок")
+            bot.send_message(message.chat.id, "У вас нет досок", reply_markup=hideBoard)
     except KeyError as e:
         if e == 'selected_board':
-            bot.send_message(message.chat.id, "{}Вы не выбрали доску \n /set_board".format(e))
+            bot.send_message(message.chat.id, "Вы не выбрали доску \n /set_board", reply_markup=hideBoard)
     except ValueError as v:
         bot.send_message(message.chat.id, "Неверный токен. Введите токен по примеру:\n"
-                                          "/token 132fvs5e61466asd7af".format(v),
+                                          "/token 132fvs5e61466asd7af",
                          reply_markup=keyboard_token)
-
 
 
 @bot.message_handler(commands=['set_list'])
@@ -167,9 +166,9 @@ def set_board(message):
         if len(lists) > 0:
             bot.send_message(message.chat.id, "Выберите лист:", reply_markup=keyboard)
         else:
-            bot.send_message(message.chat.id, "У вас нет листов")
+            bot.send_message(message.chat.id, "У вас нет листов", reply_markup=hideBoard)
     except KeyError as e:
-        bot.send_message(message.chat.id, "{}Вы не выбрали доску \n /set_board".format(e))
+        bot.send_message(message.chat.id, "Вы не выбрали доску \n /set_board", reply_markup=hideBoard)
 
 
 @bot.callback_query_handler(func=lambda call: call.data.startswith('id = '))
@@ -201,7 +200,7 @@ def handle_set_list(call):
             save_user_data(chat_id, new_data)
             bot.send_message(chat_id, "Выберан лист: {}.\n"
                                       "Ответьте на появившееся событие, чтобы добавить к нему комментарий\n"
-                                      "/get показать события текущей недели \n"                                                                           
+                                      "/get показать события текущей недели \n"
                                       "/get_next показать события следующей недели"
                              .format(name),
                              reply_markup=keyboard_week)
@@ -247,12 +246,10 @@ def handle_reply(message):
             bot.send_message(message.chat.id, '{} – {}'.format(message.text, message.reply_to_message.text),
                              reply_markup=keyboard_send_trello)
         else:
-            bot.send_message(message.chat.id, "Вы не выбрали доску \n /set_board")
+            bot.send_message(message.chat.id, "Вы не выбрали доску \n /set_board", reply_markup=hideBoard)
     except KeyError as e:
         if e == 'selected_board':
-            bot.send_message(message.chat.id, "{}Вы не выбрали доску \n /set_board".format(e))
-        elif e == 'selected_list':
-            bot.send_message(message.chat.id, "{}Вы не выбрали лист \n /set_list".format(e))
+            bot.send_message(message.chat.id, "Вы не выбрали доску \n /set_board", reply_markup=hideBoard)
 
 
 @bot.callback_query_handler(func=lambda call: call.data.startswith('send='))
@@ -263,7 +260,7 @@ def callback_inline(call):
     print(url)
     print(str(response))
     if str(response) == '<Response [200]>':
-        bot.send_message(chat_id, "Готово")
+        bot.send_message(chat_id, "Готово", reply_markup=hideBoard)
 
 
 def get_calendar(message):
@@ -277,7 +274,7 @@ def get_calendar(message):
             if creds and creds.expired and creds.refresh_token:
                 creds.refresh(Request())
             else:
-                bot.send_message(message.chat.id, 'вы не авторизовались. используйте /start для авторизации')
+                bot.send_message(message.chat.id, 'Вы не авторизовались. используйте /start для авторизации')
                 return
 
         service = build('calendar', 'v3', credentials=creds)
@@ -300,10 +297,7 @@ def get_calendar(message):
             start_date = event['start'].get('dateTime', event['start'].get('date'))
             start_format = parse(start_date).date().strftime("%d.%m.%Y") + ' ' + parse(start_date).strftime("%H:%M")
             bot.send_message(message.chat.id, start_format + " – " + event['summary'])
-        # else:
-        #     bot.send_message(message.chat.id, "Выберите неделю.\nТекущая /get .\n" \
-        #                      + "Следующая /get_next ", \
-        #                      reply_markup=keyboard_week)
+
 
     except Exception as e:
         bot.send_message(message.chat.id, "Войдите в Google аккаунт")
