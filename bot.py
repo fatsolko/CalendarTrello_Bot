@@ -100,11 +100,9 @@ def token(message):
 def set_board(message):
     url = "https://api.trello.com/1/members/me/boards?fields=name,url&key={}&token={}".format(
         trello_key,
-        get_trello_token(message.chat.id)
-    )
+        get_trello_token(message.chat.id))
     print(url)
     boards = requests.get(url).json()
-
     keyboard = types.InlineKeyboardMarkup()
     user_data = get_user_data(message.chat.id)
     user_data['boards'] = boards
@@ -121,6 +119,7 @@ def set_board(message):
     else:
         bot.send_message(message.chat.id, "У вас нет досок")
 
+
 @bot.message_handler(commands=['set_list'])
 def set_board(message):
     selected_board = get_user_data(message.chat.id)["selected_board"]
@@ -133,20 +132,16 @@ def set_board(message):
     )
     print(list_url)
     lists = requests.get(list_url).json()
-
     list_id = lists
     selected_board['lists'] = list_id
     user_data = get_user_data(message.chat.id)
     user_data['selected_board'] = selected_board
-
     save_user_data(message.chat.id, user_data)
-
     keyboard = types.InlineKeyboardMarkup()
-
     user_data['lists'] = lists
-    for list in lists:
-        list_id = list["id"]
-        list_name = list["name"]
+    for board_list in lists:
+        list_id = board_list["id"]
+        list_name = board_list["name"]
         callback_data = 'list_id = {}'.format(list_id)
         button = types.InlineKeyboardButton('{}'.format(list_name), callback_data=callback_data)
         keyboard.row(button)
@@ -173,6 +168,23 @@ def handle_set_board(call):
                              reply_markup=keyboard_week)
 
 
+@bot.callback_query_handler(func=lambda call: call.data.startswith('list_id = '))
+def handle_set_list(call):
+    list_id = find_after(call.data, 'list_id = ')
+    chat_id = call.message.chat.id
+    user_data = get_user_data(chat_id)
+    lists = user_data["lists"]
+    for list_count in lists:
+        if list_count["id"] == list_id:
+            name = list_count['name']
+            new_data = get_user_data(chat_id)
+            new_data["selected_list"] = list_count
+            save_user_data(chat_id, new_data)
+            bot.send_message(chat_id, "Выберан лист: {}. Для получения событий текущей недели введите /get\n"
+                                      "Для получения событий следующей недели введите /get_next".format(name),
+                             reply_markup=keyboard_week)
+
+
 @bot.message_handler(func=lambda m: True)
 def handle_message(message):
     if not os.path.exists(get_google_token_path(message.chat.id)):
@@ -188,21 +200,6 @@ def handle_message(message):
 
 
 def handle_reply(message):
-    # selected_board = get_user_data(message.chat.id)["selected_board"]
-    # selected_board_id = selected_board['id']
-    # trello_token = get_trello_token(message.chat.id)
-    # board_url = "https://api.trello.com/1/boards/{}/lists?key={}&token={}".format(
-    #     selected_board_id,
-    #     trello_key,
-    #     trello_token
-    # )
-    # print(board_url)
-
-    # response = requests.get(board_url).json() # список листов
-    # print(response)
-    # list_id = response
-    # selected_board['lists'] = list_id
-    # save_user_data(message.chat.id, selected_board)
     user_data = get_user_data(message.chat.id)
     selected_list_id = '60b7b698530bfd733147435a'
     name_event = find_after(message.reply_to_message.text, " – ")
