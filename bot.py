@@ -96,8 +96,7 @@ def token(message):
     save_user_data(message.chat.id, data)
     if token_trello == "":
         bot.send_message(message.chat.id, "Введите токен по примеру:\n"
-                                          "/token "
-                                          "132fvs5e61466asd7d5d0b1edf38bc020f359dde1313c133d8ed8680a849ff",
+                                          "/token 132fvs5e61466asd7d5d0b1edf38",
                          reply_markup=keyboard_token)
 
     else:
@@ -133,9 +132,8 @@ def set_board(message):
         if e == 'selected_board':
             bot.send_message(message.chat.id, "{}Вы не выбрали доску \n /set_board".format(e))
     except ValueError as v:
-        bot.send_message(message.chat.id, "{}Введите токен по примеру:\n"
-                                          "/token "
-                                          "132fvs5e61466asd7d5d0b1edf38bc020f359dde1313c133d8ed8680a849ff".format(v),
+        bot.send_message(message.chat.id, "Неверный токен. Введите токен по примеру:\n"
+                                          "/token 132fvs5e61466asd7af".format(v),
                          reply_markup=keyboard_token)
 
 
@@ -248,7 +246,10 @@ def handle_reply(message):
         bot.send_message(message.chat.id, '{} – {}'.format(message.text, message.reply_to_message.text),
                          reply_markup=keyboard_send_trello)
     except KeyError as e:
-        bot.send_message(message.chat.id, "{}Вы не выбрали доску или лист \n /set_list".format(e))
+        if e == 'selected_board':
+            bot.send_message(message.chat.id, "{}Вы не выбрали доску или лист \n /set_list".format(e))
+        elif e == 'selected_list':
+            bot.send_message(message.chat.id, "{}Вы не выбрали лист \n /set_list".format(e))
 
 
 @bot.callback_query_handler(func=lambda call: call.data.startswith('send='))
