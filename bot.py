@@ -179,7 +179,8 @@ def handle_set_list(call):
             new_data["selected_board"]["selected_list"] = list_count
             save_user_data(chat_id, new_data)
             bot.send_message(chat_id, "Выберан лист: {}.\n/get события текущей недели \n"
-                                      "/get_next события следующей недели ".format(name),
+                                      "/get_next события следующей недели\n"
+                                      "Ответьте на интересующее событие, чтобы добавить комментарий".format(name),
                              reply_markup=keyboard_week)
 
 
@@ -213,8 +214,8 @@ def handle_reply(message):
     short_post_url = short_url.tinyurl.short(url)
     keyboard_send_trello = types.InlineKeyboardMarkup()
     name_selected_board = user_data['selected_board']["name"]
-    name_selected_list = user_data['selected_board']["selected_list"]
-    button_text = "Отправить на доску {}\nЛист {}".format(name_selected_board,name_selected_list)
+    name_selected_list = user_data['selected_board']["selected_list"]['name']
+    button_text = "Отправить на доску {}\nЛист {}".format(name_selected_board, name_selected_list)
     callback_data = "send={}".format(short_post_url)
     url_button = types.InlineKeyboardButton(text=button_text, callback_data=callback_data)
     keyboard_send_trello.row(url_button)
