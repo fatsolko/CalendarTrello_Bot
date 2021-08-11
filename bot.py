@@ -173,7 +173,7 @@ def handle_set_list(call):
     list_id = find_after(call.data, 'list_id = ')
     chat_id = call.message.chat.id
     user_data = get_user_data(chat_id)
-    lists = user_data["lists"]
+    lists = user_data['selected_board']["lists"]
     for list_count in lists:
         if list_count["id"] == list_id:
             name = list_count['name']
