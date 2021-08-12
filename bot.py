@@ -186,7 +186,8 @@ def handle_set_list(call):
             new_data["selected_board"]["selected_list"] = list_count
             save_user_data(chat_id, new_data)
             bot.send_message(chat_id, "Выберан лист: {}.\n"
-                                      "Ответьте на появившееся событие, чтобы добавить к нему комментарий\n"
+                                      "Ответьте на появившееся событие после нажатия на одну из команд ниже,"
+                                      " чтобы добавить к нему комментарий\n"
                                       "/get показать события текущей недели \n"
                                       "/get_next показать события следующей недели"
                              .format(name),
