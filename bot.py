@@ -42,7 +42,7 @@ def notify_success_google_auth(chat_id, success):
     if success:
         bot.send_message(chat_id, 'Авторизация через Google произошла успешно.\n\nВойдите через Trello '
                                   'аккаунт по ссылке ниже, скопируйте оттуда код-токен'
-                                  ' и напишите боту вставив код с командой через пробел без квадратных скобок. '
+                                  ' и напишите боту вставив код с командой через пробел. '
                                   'Пример:\n/token 132fv6asd7da849ff ',
                          reply_markup=keyboard_login_trello)
 
@@ -80,8 +80,9 @@ def token(message):
     data = {}
     save_user_data(message.chat.id, data)
     if token_trello == "":
-        bot.send_message(message.chat.id, "Введите токен по примеру:\n"
-                                          "/token 132fvs5ed7d0b1edf38",
+        bot.send_message(message.chat.id, "Скопируйте и вставьте токен со страницы авторизации"
+                                          " Trello по примеру:\n"
+                                          "/token 132fvse6asd7af",
                          reply_markup=keyboard_token)
 
     else:
@@ -117,7 +118,8 @@ def set_board(message):
         if e == 'selected_board':
             bot.send_message(message.chat.id, "Вы не выбрали доску \n /set_board", reply_markup=hideBoard)
     except ValueError as v:
-        bot.send_message(message.chat.id, "Неверный токен. Введите токен по примеру:\n"
+        bot.send_message(message.chat.id, "Неверный токен. Скопируйте и вставьте токен со страницы авторизации"
+                                          " Trello по примеру:\n"
                                           "/token 132fvse6asd7af",
                          reply_markup=keyboard_login_trello)
 
@@ -260,7 +262,7 @@ def get_calendar(message):
             if creds and creds.expired and creds.refresh_token:
                 creds.refresh(Request())
             else:
-                bot.send_message(message.chat.id, 'Вы не авторизовались. используйте /start для авторизации')
+                bot.send_message(message.chat.id, 'Вы не авторизовались. Введите /start для авторизации')
                 return
 
         service = build('calendar', 'v3', credentials=creds)
