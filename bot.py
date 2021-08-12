@@ -36,16 +36,14 @@ def start(message):
     keyboard_login.row(url_button)
     bot.send_message(message.chat.id, "Перейдите по ссылке ниже для входа через Google аккаунт.",
                      reply_markup=keyboard_login)
-    # \nЗатем войдите через Trello аккаунт, скопируйте токен и вставьте его с командой /token [токен]
 
 
 def notify_success_google_auth(chat_id, success):
     if success:
-
         bot.send_message(chat_id, 'Авторизация через Google произошла успешно.\n\nВойдите через Trello '
                                   'аккаунт по ссылке ниже, скопируйте оттуда код-токен'
                                   ' и напишите боту вставив код с командой через пробел без квадратных скобок. '
-                                  'Пример:\n/token 132fvs5e61466asd7da849ff ',
+                                  'Пример:\n/token 132fv6asd7da849ff ',
                          reply_markup=keyboard_login_trello)
 
 
@@ -83,7 +81,7 @@ def token(message):
     save_user_data(message.chat.id, data)
     if token_trello == "":
         bot.send_message(message.chat.id, "Введите токен по примеру:\n"
-                                          "/token 132fvs5e61466asd7d5d0b1edf38",
+                                          "/token 132fvs5ed7d0b1edf38",
                          reply_markup=keyboard_token)
 
     else:
@@ -120,7 +118,7 @@ def set_board(message):
             bot.send_message(message.chat.id, "Вы не выбрали доску \n /set_board", reply_markup=hideBoard)
     except ValueError as v:
         bot.send_message(message.chat.id, "Неверный токен. Введите токен по примеру:\n"
-                                          "/token 132fvs5e61466asd7af",
+                                          "/token 132fvse6asd7af",
                          reply_markup=keyboard_login_trello)
 
 
@@ -280,7 +278,7 @@ def get_calendar(message):
                                                   orderBy='startTime').execute()
             events = events_result.get('items', [])
         if not events:
-            bot.send_message(message.chat.id, 'No upcoming events found.')
+            bot.send_message(message.chat.id, 'Нет событий')
         for event in events:
             start_date = event['start'].get('dateTime', event['start'].get('date'))
             start_format = parse(start_date).date().strftime("%d.%m.%Y") + ' ' + parse(start_date).strftime("%H:%M")
