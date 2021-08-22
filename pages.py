@@ -11,7 +11,7 @@ error_page = """
 <html>
 <body>
 <meta charset="utf-8">
-<h1>"Прывiтанне!!!"</h1>
+<h1>Прывiтанне!</h1>
 <img src="https://files.liveworksheets.com/def_files/2020/4/1/4011430193088/4011430193088001.jpg?ssl=1" width="450" height="600"/>
 </body>
 </html>
