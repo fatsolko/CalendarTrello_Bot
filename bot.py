@@ -53,6 +53,14 @@ def notify_success_google_auth(chat_id, success):
               + "попробуйте еще раз: /start"
         bot.send_message(chat_id, msg, reply_markup=hideBoard)
 
+@bot.message_handler(commands=['trello_login'])
+def login(message):
+    bot.send_message(message.chat.id, 'Авторизация через Google произошла успешно.\n\nВойдите через Trello '
+                              'аккаунт по ссылке ниже, скопируйте оттуда код-токен'
+                              ' и напишите боту вставив код с командой через пробел. '
+                              'Пример:\n/token 132fv6asd7da849ff',
+                     reply_markup=keyboard_login_trello)
+
 
 @bot.message_handler(commands=['help'])
 def help(message):
