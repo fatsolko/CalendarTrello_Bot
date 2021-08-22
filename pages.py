@@ -11,7 +11,7 @@ error_page = """
 <html>
 <body>
 <h1>404!!!</h1>
-<img src="https://i2.wp.com/video-images.vice.com/_uncategorized/1559761687582-Capture.png?ssl=1" width="450" height="600"/>
+<img src="https://files.liveworksheets.com/def_files/2020/4/1/4011430193088/4011430193088001.jpg?ssl=1" width="450" height="600"/>
 </body>
 </html>
 
