@@ -5,6 +5,7 @@ import pyshorteners
 
 f = open('credentials.json')
 credentials = json.load(f)["web"]
+credentials["trello_key"] = None
 trello_key = credentials["trello_key"]
 keyboard_login_trello = telebot.types.InlineKeyboardMarkup()
 auth_url_update_trello = 'https://trello.com/1/authorize?' \

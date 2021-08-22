@@ -12,6 +12,7 @@ f = open('credentials.json')
 credentials = json.load(f)["web"]
 client_id = credentials["client_id"]
 client_secret = credentials["client_secret"]
+credentials["trello_key"] = None
 trello_key = credentials["trello_key"]
 f.close()
 f = open('settings.json')
