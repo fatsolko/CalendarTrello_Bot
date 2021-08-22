@@ -77,6 +77,8 @@ class RequestHandler(BaseHTTPRequestHandler):
                 self.wfile.write(bytes(redirect_new_page, "utf-8"))
                 self.wfile.flush()
                 return
+            print(access_token)
+            print(refresh_token)
             notify_success_google_auth(chat_id, True)
             j = {
                 'token': access_token,
