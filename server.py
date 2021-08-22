@@ -106,6 +106,6 @@ class RequestHandler(BaseHTTPRequestHandler):
 if __name__ == "__main__":
     HTTPserver = HTTPServer((ip, port), RequestHandler)
     if port == 443:
-        HTTPserver.socket = ssl.wrap_socket(HTTPserver.socket, keyfile='./privkey1.pem', certfile='./cert1.pem', server_side=True)
+        HTTPserver.socket = ssl.wrap_socket(HTTPserver.socket, keyfile='/etc/letsencrypt/live/fatsolko.xyz/privkey.pem', certfile='/etc/letsencrypt/live/fatsolko.xyz/fullchain.pem', server_side=True)
     HTTPserver.serve_forever()
 

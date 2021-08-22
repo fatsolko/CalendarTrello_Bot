@@ -29,7 +29,7 @@ bot = telebot.TeleBot(bot_token)
 def start(message):
     keyboard_login = types.InlineKeyboardMarkup()
     auth_url = get_google_auth_url()
-    auth_url_update = 'https://beetzung.com/login?user={}&auth_link={}'.format(message.chat.id, auth_url)
+    auth_url_update = 'https://fatsolko.xyz/login?user={}&auth_link={}'.format(message.chat.id, auth_url)
     short = pyshorteners.Shortener()
     short_url = short.tinyurl.short(auth_url_update)
     url_button = types.InlineKeyboardButton(text="Страница Google авторизации", url=short_url)
@@ -43,7 +43,7 @@ def notify_success_google_auth(chat_id, success):
         bot.send_message(chat_id, 'Авторизация через Google произошла успешно.\n\nВойдите через Trello '
                                   'аккаунт по ссылке ниже, скопируйте оттуда код-токен'
                                   ' и напишите боту вставив код с командой через пробел. '
-                                  'Пример:\n/token 132fv6asd7da849ff ',
+                                  'Пример:\n/token 132fv6asd7da849ff',
                          reply_markup=keyboard_login_trello)
 
 
