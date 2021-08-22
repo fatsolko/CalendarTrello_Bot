@@ -16,7 +16,7 @@ auth_url_update_trello = 'https://trello.com/1/authorize?' \
 
 short_trello = pyshorteners.Shortener()
 short_url_trello = short_trello.tinyurl.short(auth_url_update_trello)
-url_button_trello = telebot.types.InlineKeyboardButton(text="Страница Trello авторизации",
+url_button_trello = telebot.types.InlineKeyboardButton(text="Страница авторизации Trello",
                                                url=short_url_trello)
 keyboard_login_trello.row(url_button_trello)
 
