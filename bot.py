@@ -279,8 +279,9 @@ def get_calendar(message):
 
 
         if message.text.lower() == '/get' or message.text.lower() == "текущая неделя":
-            calendars = service.calendarList().get(calendarId='calendarId').execute()
+            calendars = service.calendarList().get().execute()
             print(calendars)
+
             events_result = service.events().list(calendarId='primary', timeMin=now,
                                                   timeMax=day_start_week, singleEvents=True,
                                                   orderBy='startTime').execute()
