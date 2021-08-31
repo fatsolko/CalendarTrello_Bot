@@ -276,7 +276,11 @@ def get_calendar(message):
         service = build('calendar', 'v3', credentials=creds)
         day_start_week, day_end_week, now = start_end_week()
 
+
+
         if message.text.lower() == '/get' or message.text.lower() == "текущая неделя":
+            calendars = service.calendarList().get(calendarId='calendarId')
+            print(calendars)
             events_result = service.events().list(calendarId='primary', timeMin=now,
                                                   timeMax=day_start_week, singleEvents=True,
                                                   orderBy='startTime').execute()
