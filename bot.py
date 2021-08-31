@@ -279,7 +279,7 @@ def get_calendar(message):
 
 
         if message.text.lower() == '/get' or message.text.lower() == "текущая неделя":
-            calendars = service.calendarList().get().execute()
+            calendars = service.calendarList().get(calendarId='den2434358@gmail.com').execute()
             print(calendars)
 
             events_result = service.events().list(calendarId='primary', timeMin=now,
