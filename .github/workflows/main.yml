@@ -10,7 +10,7 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         known_hosts: 'just-a-placeholder-so-we-dont-get-errors'
     - name: Adding Known Hosts
-      run: ssh-keyscan -H {% raw %}${{ secrets.SSH_HOST }}{% endraw%} >> /home/ubuntu/.ssh/known_hosts
+      run: ssh-keyscan -H {% raw %}${{ secrets.SSH_HOST }}{% endraw%} >> ~/.ssh/known_hosts
     - name: Deploy with rsync
       run: rsync -avz /fatsolko/CalendarTrelloBot/ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/home/ubuntu/cal/
   
