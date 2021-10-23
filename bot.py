@@ -24,6 +24,8 @@ f.close()
 SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
 bot = telebot.TeleBot(bot_token)
 
+# sdas
+
 
 @bot.message_handler(commands=['start'])
 def start(message):
