@@ -322,4 +322,4 @@ def get_google_auth_url():
 
 
 if __name__ == '__main__':
-    bot.infinity_polling()
+    bot.infinity_polling(timeout=10, long_polling_timeout = 5)
