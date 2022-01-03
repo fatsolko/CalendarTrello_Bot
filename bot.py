@@ -17,21 +17,21 @@ f.close()
 f = open('settings.json')
 settings = json.load(f)
 bot_token = settings["bot_token"]
-redirect_url = settings["redirect_url"]
+redirect_url = settings["redirect_url_localhost"] #TODO settings["redirect_url"]
 app_name = settings["app_name"]
 f.close()
 
 SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
 bot = telebot.TeleBot(bot_token)
-
-# sdas
+site = "http://localhost:5000"
+#TODO site = "https://fatsolko.xyz"
 
 
 @bot.message_handler(commands=['start'])
 def start(message):
     keyboard_login = types.InlineKeyboardMarkup()
     auth_url = get_google_auth_url()
-    auth_url_update = 'https://fatsolko.xyz/login?user={}&auth_link={}'.format(message.chat.id, auth_url)
+    auth_url_update = '{}/login?user={}&auth_link={}'.format(site, message.chat.id, auth_url)
     short = pyshorteners.Shortener()
     short_url = short.tinyurl.short(auth_url_update)
     url_button = types.InlineKeyboardButton(text="Страница Google авторизации", url=short_url)
@@ -322,4 +322,4 @@ def get_google_auth_url():
 
 
 if __name__ == '__main__':
-    bot.infinity_polling(timeout=10, long_polling_timeout = 5)
+    bot.infinity_polling(timeout=10, long_polling_timeout=5)

@@ -8,6 +8,11 @@ import utils
 from pages import *
 from bot import notify_success_google_auth
 
+import sys
+print('Python %s on %s' % (sys.version, sys.platform))
+sys.path.extend(['D:\\Programming\\Python\\CalendarTrelloBot', 'D:\\Programming\\Python\\pyMQ', 'D:/Programming/Python/CalendarTrelloBot'])
+
+
 f = open('credentials.json')
 credentials = json.load(f)["web"]
 client_id = credentials["client_id"]
@@ -16,7 +21,7 @@ f.close()
 f = open('settings.json')
 settings = json.load(f)
 bot_token = settings["bot_token"]
-redirect_url = settings["redirect_url"]
+redirect_url = settings["redirect_url_localhost"] #TODO settings["redirect_url"]
 ip = settings["ip"]
 port = settings["port"]
 bot_link = settings["bot_link"]
@@ -108,6 +113,8 @@ class RequestHandler(BaseHTTPRequestHandler):
 if __name__ == "__main__":
     HTTPserver = HTTPServer((ip, port), RequestHandler)
     if port == 443:
-        HTTPserver.socket = ssl.wrap_socket(HTTPserver.socket, keyfile='/etc/letsencrypt/live/fatsolko.xyz/privkey.pem', certfile='/etc/letsencrypt/live/fatsolko.xyz/fullchain.pem', server_side=True)
+        HTTPserver.socket = ssl.wrap_socket(HTTPserver.socket, keyfile='/etc/letsencrypt/live/fatsolko.xyz/privkey.pem',
+                                            certfile='/etc/letsencrypt/live/fatsolko.xyz/fullchain.pem',
+                                            server_side=True)
     HTTPserver.serve_forever()
 
