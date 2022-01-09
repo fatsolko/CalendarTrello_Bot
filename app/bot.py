@@ -6,15 +6,15 @@ import os.path
 from googleapiclient.discovery import build
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
-from utils import *
+from utils.utils import *
 
-f = open('credentials.json')
+f = open('../credentials.json')
 credentials = json.load(f)["web"]
 client_id = credentials["client_id"]
 client_secret = credentials["client_secret"]
 trello_key = credentials["trello_key"]
 f.close()
-f = open('settings.json')
+f = open('../settings.json')
 settings = json.load(f)
 bot_token = settings["bot_token"]
 redirect_url = settings["redirect_url_localhost"] #TODO settings["redirect_url"]
@@ -309,7 +309,7 @@ def get_calendar(message):
 
 def get_google_auth_url():
     flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
-        'credentials.json',
+        '../credentials.json',
         scopes=SCOPES)
     flow.redirect_uri = redirect_url
     authorization_url, state = flow.authorization_url(

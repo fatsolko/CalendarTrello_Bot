@@ -3,7 +3,7 @@ import datetime
 import telebot
 import pyshorteners
 
-f = open('credentials.json')
+f = open('../credentials.json')
 credentials = json.load(f)["web"]
 trello_key = credentials["trello_key"]
 keyboard_login_trello = telebot.types.InlineKeyboardMarkup()
