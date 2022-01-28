@@ -2,9 +2,8 @@ import os
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import requests
 from requests.structures import CaseInsensitiveDict
-import json
 import ssl
-from utils.utils import *
+from utils_server import *
 from pages.pages import *
 from app.bot import notify_success_google_auth
 
@@ -54,10 +53,10 @@ class RequestHandler(BaseHTTPRequestHandler):
         print('got request for ' + self.path)
         request_ip = self.client_address[0]
         if self.path.startswith("/login"):
-            chat_id = int(utils.find_between(self.path, 'user=', '&auth_link'))
+            chat_id = int(find_between(self.path, 'user=', '&auth_link'))
             url = self.path.split("&auth_link=", 1)[1]
             j = {"chat_id": chat_id}
-            with open("users/{}.json".format(request_ip), "w") as outfile:
+            with open("../users/{}.json".format(request_ip), "w") as outfile:
                 json.dump(j, outfile)
             web_page = first_page.replace("{url1}", url).replace("{url2}", url)
             self.send_response(200)
@@ -67,12 +66,12 @@ class RequestHandler(BaseHTTPRequestHandler):
             self.wfile.flush()
 
         elif self.path.startswith("/redirect"):
-            user_id_path = 'users/{}.json'.format(request_ip)
+            user_id_path = '../users/{}.json'.format(request_ip)
             if not os.path.exists(user_id_path):
                 pass
             user_id_file = open(user_id_path)
             chat_id = json.load(user_id_file)["chat_id"]
-            code = utils.find_between(self.path, "code=", "&scope")
+            code = find_between(self.path, "code=", "&scope")
             access_token, refresh_token = send_token_request(code)
             if access_token == 'no_token' or refresh_token == 'no_token':
                 notify_success_google_auth(chat_id, False)
@@ -92,7 +91,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                 "client_secret": client_secret,
                 "scopes": SCOPES
             }
-            with open(utils.get_google_token_path(chat_id), "w") as outfile:
+            with open(get_google_token_path(chat_id), "w") as outfile:
                 json.dump(j, outfile, sort_keys=True, indent=4)
             self.send_response(200)
             self.send_header("Content-type", "text/html")
