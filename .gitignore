@@ -50,9 +50,10 @@ wheels/
 .installed.cfg
 *.egg
 
+dockerfile
 credentials.json
 settings.json
 update_bot.bat
-/users/
+/server/users/
 
 

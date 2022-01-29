@@ -56,7 +56,7 @@ class RequestHandler(BaseHTTPRequestHandler):
             chat_id = int(find_between(self.path, 'user=', '&auth_link'))
             url = self.path.split("&auth_link=", 1)[1]
             j = {"chat_id": chat_id}
-            with open("../users/{}.json".format(request_ip), "w") as outfile:
+            with open("users/{}.json".format(request_ip), "w") as outfile:
                 json.dump(j, outfile)
             web_page = first_page.replace("{url1}", url).replace("{url2}", url)
             self.send_response(200)
@@ -66,7 +66,7 @@ class RequestHandler(BaseHTTPRequestHandler):
             self.wfile.flush()
 
         elif self.path.startswith("/redirect"):
-            user_id_path = '../users/{}.json'.format(request_ip)
+            user_id_path = 'users/{}.json'.format(request_ip)
             if not os.path.exists(user_id_path):
                 pass
             user_id_file = open(user_id_path)
