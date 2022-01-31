@@ -2,7 +2,7 @@ import json
 import datetime
 import telebot
 import pyshorteners
-from bot import settings
+from app import settings
 
 
 trello_key = settings['trello_key']
