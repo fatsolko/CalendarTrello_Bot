@@ -4,7 +4,6 @@ import telebot
 import pyshorteners
 from app import settings
 
-
 trello_key = settings['trello_key']
 
 keyboard_login_trello = telebot.types.InlineKeyboardMarkup()
