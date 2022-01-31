@@ -4,8 +4,8 @@ import telebot
 import pyshorteners
 from bot import settings
 
-trello_key = settings['trello_key']
 
+trello_key = settings['trello_key']
 
 keyboard_login_trello = telebot.types.InlineKeyboardMarkup()
 auth_url_update_trello = 'https://trello.com/1/authorize?' \

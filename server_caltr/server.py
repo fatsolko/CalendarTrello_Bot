@@ -1,6 +1,8 @@
 import os
 import ssl
 import sys
+import json
+import telebot
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import requests
 from requests.structures import CaseInsensitiveDict
@@ -10,12 +12,12 @@ from pages import *
 print('Python %s on %s' % (sys.version, sys.platform))
 sys.path.extend(['D:\\Programming\\Python\\CalendarTrelloBot', 'D:\\Programming\\Python\\pyMQ', 'D:/Programming/Python/CalendarTrelloBot'])
 
-
 f = open('../credentials.json')
 credentials = json.load(f)["web"]
 client_id = credentials["client_id"]
 client_secret = credentials["client_secret"]
 f.close()
+
 f = open('../settings.json')
 settings = json.load(f)
 bot_token = settings["bot_token"]
@@ -24,6 +26,7 @@ ip = settings["ip"]
 port = settings["port"]
 bot_link = settings["bot_link"]
 f.close()
+
 SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
 
 bot = telebot.TeleBot(bot_token)
@@ -49,13 +52,14 @@ def send_token_request(code):
     return access_token, refresh_token
 
 def notify_success_google_auth(chat_id, success):
+    keyboard_login_trello = telebot.types.InlineKeyboardMarkup()
+    hideBoard = telebot.types.ReplyKeyboardRemove()
     if success:
         bot.send_message(chat_id, 'Авторизация через Google произошла успешно.\n\nВойдите через Trello '
                                   'аккаунт по ссылке ниже, скопируйте оттуда код-токен'
                                   ' и напишите боту вставив код с командой через пробел.\n '
                                   'Пример:\n\n/token 132fv6asd7da849ff',
                          reply_markup=keyboard_login_trello)
-
     else:
         msg = "Похоже, вы уже логинились. Если хотите перелогиниться в этот аккаунт, " \
               + "запретите доступ приложению CalendarTrello по ссылке https://myaccount.google.com/u/0/permissions и " \

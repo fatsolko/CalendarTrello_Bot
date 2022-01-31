@@ -13,6 +13,7 @@ credentials = json.load(f)["web"]
 client_id = credentials["client_id"]
 client_secret = credentials["client_secret"]
 f.close()
+
 f = open('../settings.json')
 settings = json.load(f)
 bot_token = settings["bot_token"]
