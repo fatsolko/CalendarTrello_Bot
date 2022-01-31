@@ -1,13 +1,12 @@
 import os
+import ssl
+import sys
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import requests
 from requests.structures import CaseInsensitiveDict
-import ssl
 from utils_server import *
-from pages.pages import *
-from app.bot import notify_success_google_auth
+from pages import *
 
-import sys
 print('Python %s on %s' % (sys.version, sys.platform))
 sys.path.extend(['D:\\Programming\\Python\\CalendarTrelloBot', 'D:\\Programming\\Python\\pyMQ', 'D:/Programming/Python/CalendarTrelloBot'])
 
@@ -26,6 +25,8 @@ port = settings["port"]
 bot_link = settings["bot_link"]
 f.close()
 SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
+
+bot = telebot.TeleBot(bot_token)
 
 
 def send_token_request(code):
@@ -46,6 +47,20 @@ def send_token_request(code):
         refresh_token = j["refresh_token"]
         print(refresh_token)
     return access_token, refresh_token
+
+def notify_success_google_auth(chat_id, success):
+    if success:
+        bot.send_message(chat_id, 'Авторизация через Google произошла успешно.\n\nВойдите через Trello '
+                                  'аккаунт по ссылке ниже, скопируйте оттуда код-токен'
+                                  ' и напишите боту вставив код с командой через пробел.\n '
+                                  'Пример:\n\n/token 132fv6asd7da849ff',
+                         reply_markup=keyboard_login_trello)
+
+    else:
+        msg = "Похоже, вы уже логинились. Если хотите перелогиниться в этот аккаунт, " \
+              + "запретите доступ приложению CalendarTrello по ссылке https://myaccount.google.com/u/0/permissions и " \
+              + "попробуйте еще раз: /start"
+        bot.send_message(chat_id, msg, reply_markup=hideBoard)
 
 
 class RequestHandler(BaseHTTPRequestHandler):

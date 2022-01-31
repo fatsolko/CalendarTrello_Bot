@@ -6,6 +6,8 @@ import pyshorteners
 f = open('../credentials.json')
 credentials = json.load(f)["web"]
 trello_key = credentials["trello_key"]
+
+
 keyboard_login_trello = telebot.types.InlineKeyboardMarkup()
 auth_url_update_trello = 'https://trello.com/1/authorize?' \
                          'key={}&' \
@@ -30,11 +32,11 @@ hideBoard = telebot.types.ReplyKeyboardRemove()
 
 
 def get_google_token_path(chat_id):
-    return '../users/{}_google_token.json'.format(chat_id)
+    return '../server_caltr/users/{}_google_token.json'.format(chat_id)
 
 
 def get_trello_token_path(chat_id):
-    return '../users/{}_trello_token.json'.format(chat_id)
+    return '../server_caltr/users/{}_trello_token.json'.format(chat_id)
 
 
 def get_trello_token(chat_id):
@@ -42,11 +44,11 @@ def get_trello_token(chat_id):
 
 
 def get_user_data(chat_id):
-    return json.load(open('../users/{}.json'.format(chat_id)))
+    return json.load(open('../server_caltr/users/{}.json'.format(chat_id)))
 
 
 def save_user_data(chat_id, data):
-    with open("../users/{}.json".format(chat_id), "w") as outfile:
+    with open("../server_caltr/users/{}.json".format(chat_id), "w") as outfile:
         json.dump(data, outfile, sort_keys=True, indent=4, ensure_ascii=False)
 
 

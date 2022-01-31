@@ -53,7 +53,6 @@ wheels/
 dockerfile
 credentials.json
 settings.json
-update_bot.bat
-/server/users/
+/server_caltr/users/
 
 

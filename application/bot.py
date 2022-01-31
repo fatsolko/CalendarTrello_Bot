@@ -17,14 +17,16 @@ f.close()
 f = open('../settings.json')
 settings = json.load(f)
 bot_token = settings["bot_token"]
-redirect_url = settings["redirect_url_localhost"] #TODO settings["redirect_url"]
+redirect_url = settings["redirect_url_localhost"]  # TODO settings["redirect_url"]
 app_name = settings["app_name"]
 f.close()
 
 SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
 bot = telebot.TeleBot(bot_token)
 site = "http://localhost:5000"
-#TODO site = "https://fatsolko.xyz"
+
+
+# TODO site = "https://fatsolko.xyz"
 
 
 @bot.message_handler(commands=['start'])
@@ -48,24 +50,24 @@ def notify_success_google_auth(chat_id, success):
                                   'Пример:\n\n/token 132fv6asd7da849ff',
                          reply_markup=keyboard_login_trello)
 
-
     else:
         msg = "Похоже, вы уже логинились. Если хотите перелогиниться в этот аккаунт, " \
               + "запретите доступ приложению CalendarTrello по ссылке https://myaccount.google.com/u/0/permissions и " \
               + "попробуйте еще раз: /start"
         bot.send_message(chat_id, msg, reply_markup=hideBoard)
 
+
 @bot.message_handler(commands=['trello_login'])
 def login(message):
     bot.send_message(message.chat.id, 'Авторизация через Google произошла успешно.\n\nВойдите через Trello '
-                              'аккаунт по ссылке ниже, скопируйте оттуда код-токен'
-                              ' и напишите боту вставив код с командой через пробел. '
-                              'Пример:\n/token 132fv6asd7da849ff',
+                                      'аккаунт по ссылке ниже, скопируйте оттуда код-токен'
+                                      ' и напишите боту вставив код с командой через пробел. '
+                                      'Пример:\n/token 132fv6asd7da849ff',
                      reply_markup=keyboard_login_trello)
 
 
 @bot.message_handler(commands=['help'])
-def help(message):
+def help_msg(message):
     if not os.path.exists(get_google_token_path(message.chat.id)):
         start(message)
         return
@@ -132,6 +134,7 @@ def set_board(message):
                                           " Trello по примеру:\n"
                                           "/token 132fvse6asd7af",
                          reply_markup=keyboard_login_trello)
+        print(str(v))
 
 
 @bot.message_handler(commands=['set_list'])
@@ -166,6 +169,7 @@ def set_board(message):
             bot.send_message(message.chat.id, "У вас нет листов", reply_markup=hideBoard)
     except KeyError as e:
         bot.send_message(message.chat.id, "Вы не выбрали доску \n /set_board", reply_markup=hideBoard)
+        print(str(e))
 
 
 @bot.callback_query_handler(func=lambda call: call.data.startswith('id = '))
@@ -278,8 +282,6 @@ def get_calendar(message):
         service = build('calendar', 'v3', credentials=creds)
         day_start_week, day_end_week, now = start_end_week()
 
-
-
         if message.text.lower() == '/get' or message.text.lower() == "текущая неделя":
             calendars = service.calendarList().get(calendarId='den2434358@gmail.com').execute()
             print(calendars)
@@ -300,8 +302,6 @@ def get_calendar(message):
             start_date = event['start'].get('dateTime', event['start'].get('date'))
             start_format = parse(start_date).date().strftime("%d.%m.%Y") + ' ' + parse(start_date).strftime("%H:%M")
             bot.send_message(message.chat.id, start_format + " – " + event['summary'])
-
-
     except Exception as e:
         bot.send_message(message.chat.id, "Войдите в Google аккаунт")
         print(str(e))

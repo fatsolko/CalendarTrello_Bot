@@ -42,7 +42,7 @@ def get_trello_token(chat_id):
 
 
 def get_user_data(chat_id):
-    return json.load(open('users/{}.json'.format(chat_id)))
+    return json.load(open('/users/{}.json'.format(chat_id)))
 
 
 def save_user_data(chat_id, data):
