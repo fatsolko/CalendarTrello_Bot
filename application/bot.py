@@ -12,11 +12,11 @@ f = open('../credentials.json')
 credentials = json.load(f)["web"]
 client_id = credentials["client_id"]
 client_secret = credentials["client_secret"]
-trello_key = credentials["trello_key"]
 f.close()
 f = open('../settings.json')
 settings = json.load(f)
 bot_token = settings["bot_token"]
+trello_key = settings["trello_key"]
 redirect_url = settings["redirect_url_localhost"]  # TODO settings["redirect_url"]
 f.close()
 
