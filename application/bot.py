@@ -18,7 +18,6 @@ f = open('../settings.json')
 settings = json.load(f)
 bot_token = settings["bot_token"]
 redirect_url = settings["redirect_url_localhost"]  # TODO settings["redirect_url"]
-app_name = settings["app_name"]
 f.close()
 
 SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
