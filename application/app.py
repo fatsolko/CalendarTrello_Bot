@@ -24,8 +24,6 @@ f.close()
 SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
 bot = telebot.TeleBot(bot_token)
 site = "http://localhost:5000"
-
-
 # TODO site = "https://fatsolko.xyz"
 
 
