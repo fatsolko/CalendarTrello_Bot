@@ -2,30 +2,37 @@ import json
 import datetime
 import telebot
 import pyshorteners
-from app import settings
 
-trello_key = settings['trello_key']
 
-keyboard_login_trello = telebot.types.InlineKeyboardMarkup()
-auth_url_update_trello = 'https://trello.com/1/authorize?' \
-                         'key={}&' \
-                         'expiration=never&' \
-                         'name=CalendarTrello&' \
-                         'scope=read,write&' \
-                         'response_type=token'.format(trello_key)
+f = open('../settings.json')
+settings = json.load(f)
+f.close()
 
-short_trello = pyshorteners.Shortener()
-short_url_trello = short_trello.tinyurl.short(auth_url_update_trello)
-url_button_trello = telebot.types.InlineKeyboardButton(text="Страница авторизации Trello",
-                                               url=short_url_trello)
-keyboard_login_trello.row(url_button_trello)
+
+def get_logging_trello_keyboard():
+    trello_key = settings['trello_key']
+    keyboard_login_trello = telebot.types.InlineKeyboardMarkup()
+    auth_url_update_trello = 'https://trello.com/1/authorize?' \
+                             f'key={trello_key}&' \
+                             'expiration=never&' \
+                             'name=CalendarTrello&' \
+                             'scope=read,write&' \
+                             'response_type=token'
+
+    short_trello = pyshorteners.Shortener()
+    short_url_trello = short_trello.tinyurl.short(auth_url_update_trello)
+    url_button_trello = telebot.types.InlineKeyboardButton(text="Страница авторизации Trello", url=short_url_trello)
+    keyboard_login_trello.row(url_button_trello)
+    return keyboard_login_trello
+
 
 keyboard_week = telebot.types.ReplyKeyboardMarkup(one_time_keyboard=True,
                                                   resize_keyboard=True,
-                                                  input_field_placeholder='/get or /get_now ').row("Текущая неделя",
-                                                                                                   "Следующая неделя")
-keyboard_token = telebot.types.ReplyKeyboardMarkup(input_field_placeholder='/token '
-                                                           '132fvs5e61466asd7d5d0b1edf38bc020f359dde1313c133d8ed8680a849ff')
+                                                  input_field_placeholder='/get or /get_now '
+                                                  ).row("Текущая неделя", "Следующая неделя")
+keyboard_token = telebot.types.ReplyKeyboardMarkup(
+    input_field_placeholder='/token 132fvs5e61466asd7d5d0b1edf38bc020f359dde1313c133d8ed8680a849ff'
+                                                    )
 hideBoard = telebot.types.ReplyKeyboardRemove()
 
 

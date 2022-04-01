@@ -8,6 +8,7 @@ from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from utils_app import *
 
+
 f = open('../credentials.json')
 credentials = json.load(f)["web"]
 client_id = credentials["client_id"]
@@ -25,6 +26,7 @@ SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
 bot = telebot.TeleBot(bot_token)
 site = "http://localhost:5000"
 # TODO site = "https://fatsolko.xyz"
+keyboard_login_trello = get_logging_trello_keyboard()
 
 
 @bot.message_handler(commands=['start'])
@@ -43,10 +45,9 @@ def start(message):
 def notify_success_google_auth(chat_id, success):
     if success:
         bot.send_message(chat_id, 'Авторизация через Google произошла успешно.\n\nВойдите через Trello '
-                                  'аккаунт по ссылке ниже, скопируйте оттуда код-токен'
-                                  ' и напишите боту вставив код с командой через пробел.\n '
-                                  'Пример:\n\n/token 132fv6asd7da849ff',
-                         reply_markup=keyboard_login_trello)
+                                      'аккаунт по ссылке ниже, скопируйте оттуда код-токен'
+                                      ' и напишите боту вставив код с командой через пробел. '
+                                      'Пример:\n/token 132fv6asd7da849ff', reply_markup=keyboard_login_trello)
 
     else:
         msg = "Похоже, вы уже логинились. Если хотите перелогиниться в этот аккаунт, " \
@@ -57,7 +58,7 @@ def notify_success_google_auth(chat_id, success):
 
 @bot.message_handler(commands=['trello_login'])
 def login(message):
-    bot.send_message(message.chat.id, 'Авторизация через Google произошла успешно.\n\nВойдите через Trello '
+    bot.send_message(message.chat.id, 'Войдите через Trello '
                                       'аккаунт по ссылке ниже, скопируйте оттуда код-токен'
                                       ' и напишите боту вставив код с командой через пробел. '
                                       'Пример:\n/token 132fv6asd7da849ff',
@@ -208,11 +209,12 @@ def handle_set_list(call):
 
 @bot.message_handler(func=lambda m: True)
 def handle_message(message):
-    if not os.path.exists(get_google_token_path(message.chat.id)):
+    chat_id = message.chat.id
+    if not os.path.exists(get_google_token_path(chat_id)):
         start(message)
         return
-    if not os.path.exists(get_trello_token_path(message.chat.id)):
-        notify_success_google_auth(message.chat.id, True)
+    if not os.path.exists(get_trello_token_path(chat_id)):
+        notify_success_google_auth(chat_id, True)
         return
     if message.reply_to_message is not None and message.reply_to_message.from_user.is_bot:  # TODO реплай ивента или нет
         handle_reply(message)

@@ -1,8 +1,6 @@
 import os
 import ssl
 import sys
-import json
-import telebot
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import requests
 from requests.structures import CaseInsensitiveDict
@@ -11,6 +9,7 @@ from pages import *
 
 print('Python %s on %s' % (sys.version, sys.platform))
 sys.path.extend(['D:\\Programming\\Python\\CalendarTrelloBot', 'D:\\Programming\\Python\\pyMQ', 'D:/Programming/Python/CalendarTrelloBot'])
+
 
 f = open('../credentials.json')
 credentials = json.load(f)["web"]
@@ -51,8 +50,9 @@ def send_token_request(code):
         print(refresh_token)
     return access_token, refresh_token
 
+
 def notify_success_google_auth(chat_id, success):
-    keyboard_login_trello = telebot.types.InlineKeyboardMarkup()
+    keyboard_login_trello = get_logging_trello_keyboard()
     hideBoard = telebot.types.ReplyKeyboardRemove()
     if success:
         bot.send_message(chat_id, 'Авторизация через Google произошла успешно.\n\nВойдите через Trello '
