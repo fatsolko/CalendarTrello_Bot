@@ -55,7 +55,7 @@
 #    - sshpass -e ssh -o stricthostkeychecking=no $USER@$HOST systemctl restart $SERVICE
 
 # Use Alpine + glibc image from Docker Hub
-image: frolvlad/alpine-glibc
+#image: frolvlad/alpine-glibc
 
 # Optionally use caching (currently it slows down instead of speeding up, so not using)
 #cache:
