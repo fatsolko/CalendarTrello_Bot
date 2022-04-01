@@ -68,7 +68,7 @@ def notify_success_google_auth(chat_id, success):
 
 
 class RequestHandler(BaseHTTPRequestHandler):
-    def do_GET(self):
+    def do_get(self):
         print('got request for ' + self.path)
         request_ip = self.client_address[0]
         if self.path.startswith("/login"):
@@ -124,7 +124,7 @@ class RequestHandler(BaseHTTPRequestHandler):
             self.wfile.write(bytes(error_page, "utf-8"))
             self.wfile.flush()
 
-    def do_POST(self):
+    def do_post(self):
         pass
 
 
