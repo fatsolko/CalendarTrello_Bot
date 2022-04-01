@@ -1,5 +1,6 @@
 image: golang:latest
 
+
 before_script:
 # Гитлаб скачивает себе утилиту sshpass
   - apt-get update -qq && apt-get install -y -qq sshpass
