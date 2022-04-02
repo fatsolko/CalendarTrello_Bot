@@ -4,7 +4,7 @@
 image: "python:3.7" #commands to run in the Docker container before starting each job.
 before_script:
   - python --version
-  - pip install -r application/requirements.txt# different stages in the pipeline
+  - pip install -r src/application/requirements.txt# different stages in the pipeline
 stages:
   - Static Analysis
   - Test#defines the job in Static Analysis
