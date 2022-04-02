@@ -11,4 +11,4 @@ stages:
 pylint:
   stage: Static Analysis
   script:
-  - pylint -d C0301 src/application/*.py
+  - pylint -d C0301 application/*.py
