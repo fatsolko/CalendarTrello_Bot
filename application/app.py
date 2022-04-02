@@ -10,9 +10,9 @@ from utils_app import *
 
 
 f = open('../credentials.json')
-credentials = json.load(f)["web"]
-client_id = credentials["client_id"]
-client_secret = credentials["client_secret"]
+CREDENTIALS = json.load(f)["web"]
+CLIENT_ID = CREDENTIALS["client_id"]
+CLIENT_SECRET = CREDENTIALS["client_secret"]
 f.close()
 
 f = open('../settings.json')
