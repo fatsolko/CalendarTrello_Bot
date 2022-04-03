@@ -6,9 +6,13 @@ before_script:
   - python --version
   - pip install -r ./application/requirements.txt
 stages:
-  - Static Analysis
-  - Test
-pylint:
-  stage: Static Analysis
+  - deploy
+
+# define the jobs in deploy stage
+
+deploy:
+  stage: deploy
   script:
-  - pylint -d C0301 application/*.py
+    - python ./application/bot.py
+
+
