@@ -13,6 +13,6 @@ stages:
 deploy:
   stage: deploy
   script:
-    - python ./application/bot.py
+    - python ./application/app.py
 
 
