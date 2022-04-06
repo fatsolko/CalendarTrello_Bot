@@ -1,5 +1,5 @@
 # first stage
-FROM python:3.10-onbuild
+FROM alpine:3.15
 
 RUN apt-get update
 
