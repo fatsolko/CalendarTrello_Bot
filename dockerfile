@@ -1,7 +1,5 @@
 # first stage
-FROM python:3.10-slim
-
-RUN apk update and apk add
+FROM python:3.10-alpine
 
 RUN apt-get update
 
