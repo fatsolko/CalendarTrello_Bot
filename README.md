@@ -1,4 +1,4 @@
 # CalendarTrelloBot
 
-This program with a telegram chat bot interface helps
+This program with a telegram chatbot interface helps
 to convert Google Calendar events into Trello board cards
