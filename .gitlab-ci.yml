@@ -39,19 +39,3 @@ deploy:
   only:
     - master
 
-#
-#image: "python:3.7" #commands to run in the Docker container before starting each job.
-#before_script:
-#  - python --version
-#  - pip install -r ./bot/requirements.txt
-#stages:
-#  - deploy
-#
-## define the jobs in deploy stage
-#
-#deploy:
-#  stage: deploy
-#  script:
-#    - python ./bot/bot.py
-
-
