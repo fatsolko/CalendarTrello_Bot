@@ -1,15 +1,16 @@
 # first stage
-FROM python:3.10-alpine
+FROM python:3.8-slim
 
-RUN apt-get update
+RUN apt update && \
+    apt install --no-install-recommends -y build-essential gcc && \
+    apt clean && rm -rf /var/lib/apt/lists/*
+COPY ./requirements.txt /requirements.txt
+COPY ./src /src
 
-RUN yes | apt-get install python3-dev build-essential
+RUN pip3 install --no-cache-dir --user -r requirements.txt
 
-RUN pip install -U --upgrade pip
-
-RUN pip install --no-cache-dir --user -r requirements.txt
-
-EXPOSE 5000
+EXPOSE 8080
+# CMD ['python3', '/src/app.py']
 
 # make sure you include the -u flag to have our stdout logged
 CMD ["python", "bot/bot.py"]
