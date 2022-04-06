@@ -37,5 +37,5 @@ deploy:
     name: production
     url: http://159.223.208.172
   only:
-    - master
+    - main
 
