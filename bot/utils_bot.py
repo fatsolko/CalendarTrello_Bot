@@ -1,24 +1,22 @@
+import os
 import json
 import datetime
 import telebot
 import pyshorteners
+from dotenv import load_dotenv
 
+load_dotenv()
 
-f = open('../settings.json')
-settings = json.load(f)
-f.close()
+TRELLO_KEY = os.getenv('TRELLO_KEY')
 
 
 def get_logging_trello_keyboard():
-    trello_key = settings['trello_key']
     keyboard_login_trello = telebot.types.InlineKeyboardMarkup()
-    auth_url_update_trello = 'https://trello.com/1/authorize?' \
-                             f'key={trello_key}&' \
+    auth_url_update_trello = f'https://trello.com/1/authorize?key={TRELLO_KEY}&' \
                              'expiration=never&' \
                              'name=CalendarTrello&' \
                              'scope=read,write&' \
                              'response_type=token'
-
     short_trello = pyshorteners.Shortener()
     short_url_trello = short_trello.tinyurl.short(auth_url_update_trello)
     url_button_trello = telebot.types.InlineKeyboardButton(text="Страница авторизации Trello", url=short_url_trello)
