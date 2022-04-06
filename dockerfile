@@ -1,5 +1,5 @@
 # first stage
-FROM python:3.8-onbuild
+FROM python:3.10-onbuild
 
 RUN apt-get update
 
