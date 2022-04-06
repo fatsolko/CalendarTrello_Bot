@@ -7,8 +7,10 @@ RUN yes | apt-get install python3-dev build-essential
 
 RUN pip install --upgrade pip
 
+RUN pip install requirements.txt
+
 EXPOSE 5000
 
 # make sure you include the -u flag to have our stdout logged
-CMD ["python", "application/app.py"]
+CMD ["python", "bot/bot.py"]
 
