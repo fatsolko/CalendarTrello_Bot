@@ -1,5 +1,5 @@
 # first stage
-FROM python:buster-slim
+FROM python:3.10-slim
 
 RUN apk update and apk add
 
