@@ -36,7 +36,7 @@ keyboard_login_trello = get_logging_trello_keyboard()
 def start(message):
     chat_id = message.chat.id
     keyboard_login = types.InlineKeyboardMarkup()
-    auth_url = get_google_auth_url()
+    auth_url = get_google_auth_url(chat_id)
     auth_url_update = f'{HOST}/login?user={chat_id}&auth_link={auth_url}'
     short = pyshorteners.Shortener()
     short_url = short.tinyurl.short(auth_url_update)
@@ -324,10 +324,14 @@ def get_calendar(message):
         print("err"+str(e))
 
 
-def get_google_auth_url():
-    flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
-        '../credentials.json',
-        scopes=SCOPES)
+def get_google_auth_url(chat_id):
+    user_creds = get_creds_db_data(chat_id, 'creds')
+    flow = google_auth_oauthlib.flow.Flow.from_client_config(
+        user_creds,
+        scope=SCOPES)
+    # flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
+    #     '../credentials.json',
+    #     scopes=SCOPES)
     flow.redirect_uri = REDIRECT_URI_LOCALHOST
     authorization_url, state = flow.authorization_url(
         # Enable offline access so that you can refresh an access token without
