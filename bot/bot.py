@@ -15,6 +15,12 @@ load_dotenv()
 CREDENTIALS = os.getenv('CREDENTIALS')
 CLIENT_SECRET = os.getenv('CLIENT_SECRET')
 CLIENT_ID = os.getenv('CLIENT_ID')
+PROJECT_ID = os.getenv('PROJECT_ID')
+AUTH_URI = os.getenv('AUTH_URI')
+TOKEN_URI = os.getenv('TOKEN_URI')
+AUTH_PROVIDER_X509_CERT_URL = os.getenv('AUTH_PROVIDER_X509_CERT_URL')
+REDIRECT_URIS = os.getenv('REDIRECT_URIS')
+
 SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
 
 BOT_TOKEN = os.getenv('BOT_TOKEN')
@@ -36,7 +42,7 @@ keyboard_login_trello = get_logging_trello_keyboard()
 def start(message):
     chat_id = message.chat.id
     keyboard_login = types.InlineKeyboardMarkup()
-    auth_url = get_google_auth_url(chat_id)
+    auth_url = get_google_auth_url()
     auth_url_update = f'{HOST}/login?user={chat_id}&auth_link={auth_url}'
     short = pyshorteners.Shortener()
     short_url = short.tinyurl.short(auth_url_update)
@@ -196,7 +202,7 @@ def handle_set_board(call):
         if board["id"] == board_id:
             name = board['name']
             selected_board = {"selected_board": {"id": board_id,
-                                                    "name": name}}
+                                                 "name": name}}
             set_user_db_data(chat_id, selected_board)
             bot.send_message(chat_id, f"Выберана доска: {name}.\nВыберите лист /set_list")
 
@@ -321,11 +327,21 @@ def get_calendar(message):
             bot.send_message(message.chat.id, start_format + " – " + event['summary'])
     except Exception as e:
         bot.send_message(message.chat.id, "Войдите в Google аккаунт")
-        print("err"+str(e))
+        print("err" + str(e))
 
 
-def get_google_auth_url(chat_id):
-    user_creds = get_creds_db_data(chat_id, 'creds')
+def get_google_auth_url():
+    user_creds = {"web":
+        {
+            "client_id": CLIENT_ID,
+            "project_id": PROJECT_ID,
+            "auth_uri": AUTH_URI,
+            "token_uri": TOKEN_URI,
+            "auth_provider_x509_cert_url": AUTH_PROVIDER_X509_CERT_URL,
+            "client_secret": CLIENT_SECRET,
+            "redirect_uris": REDIRECT_URIS
+        }
+    }
     flow = google_auth_oauthlib.flow.Flow.from_client_config(user_creds, SCOPES)
     # flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
     #     '../credentials.json',
