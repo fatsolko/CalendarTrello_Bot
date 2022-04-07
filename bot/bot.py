@@ -332,6 +332,7 @@ def get_google_auth_url(chat_id):
     # flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
     #     '../credentials.json',
     #     scopes=SCOPES)
+
     flow.redirect_uri = REDIRECT_URI_LOCALHOST
     authorization_url, state = flow.authorization_url(
         # Enable offline access so that you can refresh an access token without
