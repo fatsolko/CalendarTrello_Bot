@@ -326,9 +326,7 @@ def get_calendar(message):
 
 def get_google_auth_url(chat_id):
     user_creds = get_creds_db_data(chat_id, 'creds')
-    flow = google_auth_oauthlib.flow.Flow.from_client_config(
-        user_creds,
-        scope=SCOPES)
+    flow = google_auth_oauthlib.flow.Flow.from_client_config(user_creds, SCOPES)
     # flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
     #     '../credentials.json',
     #     scopes=SCOPES)
