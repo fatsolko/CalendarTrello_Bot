@@ -6,6 +6,7 @@ RUN apt update && \
     apt clean && rm -rf /var/lib/apt/lists/*
 COPY ./requirements.txt /requirements.txt
 COPY ./bot /src
+COPY .env .env
 
 RUN pip3 install --no-cache-dir --user -r requirements.txt
 
