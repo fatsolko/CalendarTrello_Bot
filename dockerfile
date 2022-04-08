@@ -9,7 +9,7 @@ COPY ./bot /src
 
 RUN pip3 install --no-cache-dir --user -r requirements.txt
 
-EXPOSE 8080
+EXPOSE 80
 # CMD ['python3', '/src/app.py']
 
 # make sure you include the -u flag to have our stdout logged
