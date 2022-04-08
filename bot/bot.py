@@ -33,7 +33,7 @@ SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
 print(BOT_TOKEN)
 bot = telebot.TeleBot(BOT_TOKEN)
 # HOST = f"{IP}:{PORT}"
-HOST = "https://fatsolko.xyz"
+HOST = "http://fatsolko.xyz" #TODO https
 keyboard_login_trello = get_logging_trello_keyboard()
 
 
