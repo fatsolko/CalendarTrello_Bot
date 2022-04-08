@@ -196,6 +196,7 @@ def handle_set_board(call):
             selected_board = {"selected_board": {"id": board_id,
                                                  "name": name}}
             set_user_db_data(chat_id, selected_board)
+            bot.answer_callback_query(call.id)
             bot.send_message(chat_id, f"Выберана доска: {name}.\nВыберите лист /set_list")
 
 
@@ -210,6 +211,7 @@ def handle_set_list(call):
             selected_list = {"selected_list": {"id": list_id,
                                                "name": name}}
             set_user_db_data(chat_id, selected_list)
+            bot.answer_callback_query(call.id)
             bot.send_message(chat_id,
                              f"Выберан лист: {name}.\n"
                              "Ответьте на появившееся событие после нажатия на одну из команд ниже,"
@@ -278,6 +280,7 @@ def callback_inline(call):
     # print(str(response))
     if str(response) == '<Response [200]>':
         bot.send_message(chat_id, "Готово", reply_markup=hideBoard)
+    bot.answer_callback_query(call.id)
 
 
 def get_calendar(message):
