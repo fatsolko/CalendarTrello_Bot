@@ -288,6 +288,7 @@ def get_calendar(message):
     if not message.text.startswith("/get") and not message.text.endswith("текущая неделя"):
         return
     user_creds = get_creds_db_data(chat_id, 'creds')
+    print(user_creds)
     creds = Credentials.from_authorized_user_info(user_creds, SCOPES)
     try:
         if not creds or not creds.valid:
@@ -321,8 +322,8 @@ def get_calendar(message):
             start_format = parse(start_date).date().strftime("%d.%m.%Y") + ' ' + parse(start_date).strftime("%H:%M")
             bot.send_message(message.chat.id, start_format + " – " + event['summary'])
     except Exception as e:
-        bot.send_message(message.chat.id, "Войдите в Google аккаунт")
         print("err" + str(e))
+        bot.send_message(message.chat.id, "Войдите в Google аккаунт")
 
 
 def get_google_auth_url():
