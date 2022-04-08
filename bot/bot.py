@@ -33,8 +33,8 @@ PORT = os.getenv('PORT')
 SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
 print(BOT_TOKEN)
 bot = telebot.TeleBot(BOT_TOKEN)
-HOST = f"{IP}:{PORT}"
-# TODO HOST = "https://fatsolko.xyz"
+# HOST = f"{IP}:{PORT}"
+HOST = "https://fatsolko.xyz"
 keyboard_login_trello = get_logging_trello_keyboard()
 
 
@@ -84,13 +84,6 @@ def login(message):
 @bot.message_handler(commands=['help'])
 def help_msg(message):
     chat_id = message.chat.id
-    if not os.path.exists(get_google_token_path(chat_id)):
-        start(message)
-        return
-    if not os.path.exists(get_trello_token_path(chat_id)):
-        notify_success_google_auth(chat_id, True)
-        return
-
     bot.send_message(chat_id,
                      "Введите /get или Текущая неделя для получения событий этой недели.\n"
                      + "Для получения событий следующей недели введите /get_next или Следующая неделя",
@@ -347,7 +340,7 @@ def get_google_auth_url():
     #     '../credentials.json',
     #     scopes=SCOPES)
 
-    flow.redirect_uri = REDIRECT_URI_LOCALHOST
+    flow.redirect_uri = REDIRECT_URI
     authorization_url, state = flow.authorization_url(
         # Enable offline access so that you can refresh an access token without
         # re-prompting the user for permission. Recommended for web server apps.

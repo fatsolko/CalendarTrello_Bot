@@ -62,20 +62,4 @@ def get_google_token(chat_id):
     collection = db['user creds']
     return collection.find_one({"chat_id": str(chat_id)})
 
-
-def set_test_dbdata(file, data):
-    """ Function to set a data into a document and
-        return the document's id.
-        """
-    collection = db['Test_data']
-    return collection.update_one({"chat_id": str(file)}, {"$set": data}, upsert=True)
-
-
-def get_test_dbdata(chat_id, data):
-    """ Function to set a data into a document and
-        return the document's id.
-        """
-    collection = db['Test_data']
-    return collection.find_one({"chat_id": str(chat_id)})[data]
-
 # print(insert_document(series_collection, new_show))

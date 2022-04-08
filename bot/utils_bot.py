@@ -1,5 +1,4 @@
 import os
-import json
 import datetime
 import telebot
 import pyshorteners
@@ -31,27 +30,6 @@ keyboard_week = telebot.types.ReplyKeyboardMarkup(one_time_keyboard=True,
 keyboard_token = telebot.types.ReplyKeyboardMarkup(
     input_field_placeholder='/token 132fvs5e61466asd7d5d0b1edf38bc020f359dde1313c133d8ed8680a849ff')
 hideBoard = telebot.types.ReplyKeyboardRemove()
-
-
-def get_google_token_path(chat_id):
-    return '../server_caltr/users/{}_google_token.json'.format(chat_id)
-
-
-def get_trello_token_path(chat_id):
-    return '../server_caltr/users/{}_trello_token.json'.format(chat_id)
-
-
-def get_trello_token(chat_id):
-    return json.load(open(get_trello_token_path(chat_id)))["token"]
-
-
-def get_user_data(chat_id):
-    return json.load(open('../server_caltr/users/{}.json'.format(chat_id)))
-
-
-def save_user_data(chat_id, data):
-    with open("../server_caltr/users/{}.json".format(chat_id), "w") as outfile:
-        json.dump(data, outfile, sort_keys=True, indent=4, ensure_ascii=False)
 
 
 def find_between(s, first, last):
