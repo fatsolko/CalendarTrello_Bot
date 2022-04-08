@@ -2,7 +2,6 @@ import requests
 from telebot import types
 import google_auth_oauthlib.flow
 from dateutil.parser import *
-import os.path
 from googleapiclient.discovery import build
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
