@@ -13,5 +13,5 @@ EXPOSE 5000
 # CMD ['python3', '/src/app.py']
 
 # make sure you include the -u flag to have our stdout logged
-CMD ["python", "src/bot.py"]
+CMD ["python", "-u", "src/bot.py"]
 
