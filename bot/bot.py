@@ -58,7 +58,7 @@ def notify_success_google_auth(chat_id, success):
         bot.send_message(chat_id,
                          'Авторизация через Google произошла успешно.\n\nВойдите через Trello '
                          'аккаунт по ссылке ниже, скопируйте оттуда код-токен'
-                         ' и напишите боту вставив код с командой через пробел. '
+                         ' и напишите боту вставив код с командой через пробел.'
                          'Пример:\n/token 132fv6asd7da849ff',
                          reply_markup=keyboard_login_trello)
 
@@ -106,7 +106,7 @@ def token(message):
 
     else:
         bot.send_message(chat_id,
-                         "Токен получен.\n"
+                         "Токен получен. Нажмите:\n"
                          "/set_board чтобы выбрать доску\n"
                          "/set_list чтобы выбрать лист",
                          reply_markup=hideBoard)
@@ -191,7 +191,7 @@ def handle_set_board(call):
                                                  "name": name}}
             set_user_db_data(chat_id, selected_board)
             bot.answer_callback_query(call.id)
-            bot.send_message(chat_id, f"Выберана доска: {name}.\nВыберите лист /set_list")
+            bot.send_message(chat_id, f"Выбрана доска: {name}.Нажмите:\n/set_list чтобы выбрать лист")
 
 
 @bot.callback_query_handler(func=lambda call: call.data.startswith('list_id = '))
@@ -207,7 +207,7 @@ def handle_set_list(call):
             set_user_db_data(chat_id, selected_list)
             bot.answer_callback_query(call.id)
             bot.send_message(chat_id,
-                             f"Выберан лист: {name}.\n"
+                             f"Выбран лист: {name}.\n"
                              "Ответьте на появившееся событие после нажатия на одну из команд ниже,"
                              " чтобы добавить к нему комментарий.\n"
                              "/get показать события текущей недели \n"
