@@ -118,9 +118,7 @@ def set_board(message):
     try:
         trello_token = get_user_db_data(chat_id, "trello_token")
         url = f"https://api.trello.com/1/members/me/boards?fields=name,url&key={TRELLO_KEY}&token={trello_token}"
-        print(url)
         boards_list = requests.get(url).json()
-        print(boards_list)
         boards_dict = {"boards_list": boards_list}
         keyboard = types.InlineKeyboardMarkup()
         set_user_db_data(chat_id, boards_dict)
@@ -150,7 +148,7 @@ def set_board(message):
                          " Trello по примеру:\n"
                          "/token 132fvse6asd7af",
                          reply_markup=keyboard_login_trello)
-        print(str(v))
+        print("err"+str(v))
 
 
 @bot.message_handler(commands=['set_list'])
@@ -158,15 +156,11 @@ def set_board(message):
     chat_id = message.chat.id
     try:
         selected_board = get_user_db_data(chat_id, "selected_board")
-        print(selected_board)
         selected_board_id = selected_board['id']
         trello_token = get_user_db_data(chat_id, "trello_token")
         list_url = f"https://api.trello.com/1/boards/{selected_board_id}/lists?key={TRELLO_KEY}&token={trello_token}"
         lists = requests.get(list_url).json()
-        print(lists)
         selected_board["lists"] = lists
-        for k, v in selected_board.items():
-            print(k, v)
         selected_board = {"selected_board": selected_board}
         set_user_db_data(chat_id, selected_board)
         keyboard = types.InlineKeyboardMarkup()
@@ -285,10 +279,9 @@ def callback_inline(call):
 
 def get_calendar(message):
     chat_id = message.chat.id
-    if not message.text.startswith("/get") and not message.text.endswith("текущая неделя"):
+    if not message.text.startswith("/get") and not message.text.endswith("неделя"):
         return
     user_creds = get_creds_db_data(chat_id, 'creds')
-    print(user_creds)
     creds = Credentials.from_authorized_user_info(user_creds, SCOPES)
     try:
         if not creds or not creds.valid:
