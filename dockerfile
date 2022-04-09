@@ -10,7 +10,6 @@ COPY ./bot /src
 RUN pip3 install --no-cache-dir --user -r requirements.txt
 
 EXPOSE 5000
-# CMD ['python3', '/src/app.py']
 
 # make sure you include the -u flag to have our stdout logged
 CMD ["python", "-u", "src/bot.py"]
