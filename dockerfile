@@ -1,4 +1,3 @@
-# first stage
 FROM python:3.8-slim
 
 RUN apt update && \
@@ -11,6 +10,6 @@ RUN pip3 install --no-cache-dir --user -r requirements.txt
 
 EXPOSE 5000
 
-# make sure you include the -u flag to have our stdout logged
+# include the -u flag to have our stdout logged
 CMD ["python", "-u", "src/bot.py"]
 
