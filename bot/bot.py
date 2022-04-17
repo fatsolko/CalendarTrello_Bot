@@ -31,7 +31,15 @@ REDIRECT_URI_LOCALHOST = os.getenv('REDIRECT_URI_LOCALHOST')
 IP = os.getenv('IP')
 PORT = os.getenv('PORT')
 
-SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
+
+sentry_sdk.init(
+    "https://190e33a49300408db635d6cadf46dbb3@o1207504.ingest.sentry.io/6340993",
+
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for performance monitoring.
+    # We recommend adjusting this value in production.
+    traces_sample_rate=1.0
+)
 print(BOT_TOKEN)
 bot = telebot.TeleBot(BOT_TOKEN)
 # HOST = f"{IP}:{PORT}"
