@@ -8,6 +8,7 @@ from google.oauth2.credentials import Credentials
 from utils_bot import *
 from pymongo_utils import *
 from dotenv import load_dotenv
+import sentry_sdk
 
 load_dotenv()
 
@@ -214,6 +215,14 @@ def handle_set_list(call):
                              "/get_next показать события следующей недели",
                              reply_markup=keyboard_week)
 
+
+@bot.message_handler(commands=['test'])
+def test(message):
+    chat_id = message.chat.id
+    try:
+        division_by_zero = 1 / 0
+    except ZeroDivisionError as e:
+        bot.send_message(chat_id, "Ошибка деления на ноль")
 
 @bot.message_handler(func=lambda m: True)
 def handle_message(message):

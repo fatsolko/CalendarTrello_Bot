@@ -26,3 +26,4 @@ rsa==4.8
 six==1.16.0
 uritemplate==4.1.1
 urllib3==1.26.9
+sentry-sdk==1.5.10
