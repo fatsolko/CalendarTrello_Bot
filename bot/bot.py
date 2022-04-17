@@ -21,6 +21,7 @@ AUTH_URI = os.getenv('AUTH_URI')
 TOKEN_URI = os.getenv('TOKEN_URI')
 AUTH_PROVIDER_X509_CERT_URL = os.getenv('AUTH_PROVIDER_X509_CERT_URL')
 REDIRECT_URIS = os.getenv('REDIRECT_URIS')
+SENTRY_DSN_BOT = os.getenv('SENTRY_DSN_BOT')
 
 SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
 
@@ -33,8 +34,7 @@ PORT = os.getenv('PORT')
 
 
 sentry_sdk.init(
-    "https://190e33a49300408db635d6cadf46dbb3@o1207504.ingest.sentry.io/6340993",
-
+    dsn=SENTRY_DSN_BOT,
     # Set traces_sample_rate to 1.0 to capture 100%
     # of transactions for performance monitoring.
     # We recommend adjusting this value in production.
