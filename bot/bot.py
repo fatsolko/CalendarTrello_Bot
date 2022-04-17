@@ -9,6 +9,7 @@ from utils_bot import *
 from pymongo_utils import *
 from dotenv import load_dotenv
 import sentry_sdk
+from sentry_sdk import capture_exception
 
 load_dotenv()
 
@@ -222,6 +223,7 @@ def test(message):
     try:
         division_by_zero = 1 / 0
     except ZeroDivisionError as e:
+        capture_exception(e)
         bot.send_message(chat_id, "Ошибка деления на ноль")
 
 @bot.message_handler(func=lambda m: True)
