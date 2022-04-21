@@ -13,7 +13,6 @@ from utils_bot import *
 
 load_dotenv()
 
-CREDENTIALS = os.getenv('CREDENTIALS')
 CLIENT_SECRET = os.getenv('CLIENT_SECRET')
 CLIENT_ID = os.getenv('CLIENT_ID')
 PROJECT_ID = os.getenv('PROJECT_ID')
